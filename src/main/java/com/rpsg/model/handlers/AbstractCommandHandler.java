@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 public interface AbstractCommandHandler<C extends GameCommand> {
 
     static <E extends GameEvent> List<E> appendElement(List<E> original, E newElement) {
+        original.forEach(System.out::println);
         return Stream.concat(original.stream(), Stream.of(newElement))
                 .collect(Collectors.toList());
     }
