@@ -2,7 +2,6 @@ package com.rpsg.infra;
 
 import com.rpsg.model.GameEvent;
 import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.multimap.list.MutableListMultimap;
 import org.eclipse.collections.impl.factory.Multimaps;
 import org.springframework.stereotype.Repository;

@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Collectors;
-import java.util.stream.Collectors;
-import java.util.*;
 import java.util.stream.Stream;
 
 @Component
@@ -23,7 +20,10 @@ public class GameCommandHandler {
     private final PlayRoundHandler playRoundHandler;
     private final EndGameHandler endGameHandler;
 
-    public GameCommandHandler(GameEventRepository gameEventRepository, StartGameHandler startGameHandler, PlayRoundHandler playRoundHandler, EndGameHandler endGameHandler) {
+    public GameCommandHandler(GameEventRepository gameEventRepository,
+                              StartGameHandler startGameHandler,
+                              PlayRoundHandler playRoundHandler,
+                              EndGameHandler endGameHandler) {
         this.gameEventRepository = gameEventRepository;
         this.startGameHandler = startGameHandler;
         this.playRoundHandler = playRoundHandler;
@@ -31,7 +31,7 @@ public class GameCommandHandler {
     }
 
     public GameState handle(GameCommand command) {
-        var newState = switch (command) {
+        return switch (command) {
             case StartGame s -> {
                 var newEvent = startGameHandler.handle(s);
                 gameEventRepository.appendEvent(newEvent.gameId(), newEvent);
@@ -52,8 +52,6 @@ public class GameCommandHandler {
                 yield new GameState(newEvent.gameId(), newEvents);
             }
         };
-        // System.out.println("State: " + newState.events().size());
-        return newState;
     }
 
     private static <T> List<T> appendElement(List<T> original, T newElement) {

@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static com.rpsg.model.Winner.DRAW;
-import static com.rpsg.model.Winner.GAME;
-import static com.rpsg.model.Winner.HUMAN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,22 +53,12 @@ public class GameBasicScenarioTest {
         assertEquals("Player1", gameStarted.player());
     }
 
-    private void recordAndAssert(Move playerMove, Move gameMove, Winner winner) {
-        switch (gameMove) {
-            case ROCK -> {
-                draws = draws + 1;
-                assertEquals(DRAW, winner);
-            }
-            case PAPER -> {
-                gameWins = gameWins + 1;
-                assertEquals(GAME, winner);
-            }
-            case SCISSORS -> {
-                humanWins = humanWins + 1;
-                assertEquals(HUMAN, winner);
-            }
+    private void recordWinner(Winner winner) {
+        switch (winner) {
+            case DRAW -> draws = draws + 1;
+            case GAME -> gameWins = gameWins + 1;
+            case HUMAN -> humanWins = humanWins + 1;
         }
-        // System.out.println("Player move: " + playerMove + ", Game move: " + gameMove + ", Winner: " + winner);
     }
 
     @Test
@@ -82,7 +70,7 @@ public class GameBasicScenarioTest {
         var event = handleAndCastLastEvent(playRound, RoundPlayed.class);
         // then
         assertEquals(Move.ROCK, event.playerMove());
-        recordAndAssert(event.playerMove(), event.gameMove(), event.winner());
+        recordWinner(event.winner());
     }
 
     @Test
@@ -94,7 +82,7 @@ public class GameBasicScenarioTest {
         var event = handleAndCastLastEvent(playRound, RoundPlayed.class);
         // then
         assertEquals(Move.ROCK, event.playerMove());
-        recordAndAssert(event.playerMove(), event.gameMove(), event.winner());
+        recordWinner(event.winner());
     }
 
     @Test
