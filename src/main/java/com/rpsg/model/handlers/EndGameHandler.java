@@ -29,8 +29,7 @@ public class EndGameHandler implements AbstractCommandHandler<GameCommand.EndGam
         var bag = Bags.mutable.withAll(nonDrawEvents).toImmutableBag();
         var topWinners = bag.topOccurrences(1);
         Winner winner;
-        if (topWinners.isEmpty() ||
-                (topWinners.size() == 2 && topWinners.get(0).getTwo() == topWinners.get(1).getTwo())) {
+        if (topWinners.size() != 1) {
             winner = Winner.DRAW;
         } else {
             winner = topWinners.get(0).getOne();
