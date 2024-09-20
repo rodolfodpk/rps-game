@@ -71,14 +71,14 @@ public class GameCommandHandler {
         return Move.values()[random.nextInt(Move.values().length)];
     }
 
-    private Winner determineWinner(Move player1Move, Move player2Move) {
-        if (player1Move == player2Move) {
+    private Winner determineWinner(Move humanMove, Move gameMove) {
+        if (humanMove == gameMove) {
             return Winner.DRAW;
         }
-        return switch (player1Move) {
-            case ROCK -> player2Move == Move.SCISSORS ? Winner.HUMAN : Winner.GAME;
-            case PAPER -> player2Move == Move.ROCK ? Winner.HUMAN : Winner.GAME;
-            case SCISSORS -> player2Move == Move.PAPER ? Winner.HUMAN : Winner.GAME;
+        return switch (humanMove) {
+            case ROCK -> gameMove == Move.SCISSORS ? Winner.HUMAN : Winner.GAME;
+            case PAPER -> gameMove == Move.ROCK ? Winner.HUMAN : Winner.GAME;
+            case SCISSORS -> gameMove == Move.PAPER ? Winner.HUMAN : Winner.GAME;
         };
     }
 
