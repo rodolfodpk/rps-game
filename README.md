@@ -1,4 +1,4 @@
-# This is my submition to your challenge.
+# Rock, paper and scissors game 
 
 ## Status
 
@@ -7,16 +7,16 @@
 ## Requirements
 
 * Java 21
-* Maven
+* Maven (tested with 3.9.3)
 
-## Build
+## Test
 
-* Just run './mvnw clean install'
+* Just run 'mvn clean verify'
 
 ## Notes
 
-* I still have to finish the Controller and e2e tests. So far, it's a WIP.
-* I focused on the domain model. I used command, events and state approach. It's almost fully tested (~90%).
+* I still have to finish the API, Controller and E2E tests. So far, it's a WIP.
+* I focused on the domain model. I used command, events and state approach. It's fully tested (~100%).
 * For the sake of simplicity (and time to deliver), I decided to use a MultiMap from Eclipse Collections instead a
   distributed cache like KeyDb (since Redis is not OSS anymore)
 
