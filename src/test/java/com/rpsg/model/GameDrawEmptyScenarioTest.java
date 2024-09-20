@@ -5,16 +5,12 @@ import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.handlers.EndGameHandler;
 import com.rpsg.model.handlers.StartGameHandler;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 import static com.rpsg.model.Winner.DRAW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameDrawEmptyScenarioTest {
 
     private static final GameEventRepository gameEventRepository = new GameEventInMemoryRepository();
@@ -37,7 +33,6 @@ public class GameDrawEmptyScenarioTest {
     }
 
     @Test
-    @Order(3)
     public void endGameShouldBeDRAW() {
         // given
         var endGame = new GameCommand.EndGame(initialState.gameId());

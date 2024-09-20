@@ -61,6 +61,6 @@ public class GameRulesTest {
         }
         // then end game event
         assertEquals(Winner.valueOf(expectedWinner), ((GameEvent.GameEnded) endGameEvent).winner());
-     }
+    }
 
 }
