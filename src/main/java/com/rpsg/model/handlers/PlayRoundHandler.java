@@ -2,22 +2,34 @@ package com.rpsg.model.handlers;
 
 import com.rpsg.model.GameCommand;
 import com.rpsg.model.GameEvent;
+import com.rpsg.model.GameEventRepository;
+import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
 import com.rpsg.model.Winner;
-import org.eclipse.collections.api.list.ImmutableList;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
+import static com.rpsg.model.handlers.AbstractCommandHandler.appendElement;
+
 @Component
-public class PlayRoundHandler {
+public class PlayRoundHandler implements AbstractCommandHandler<GameCommand.PlayRound> {
 
     private final Random random = new Random();
+    private final GameEventRepository gameEventRepository;
 
-    public GameEvent.RoundPlayed handle(GameCommand.PlayRound p, ImmutableList<GameEvent> gameEvents) {
+    public PlayRoundHandler(GameEventRepository gameEventRepository) {
+        this.gameEventRepository = gameEventRepository;
+    }
+
+    public GameState handle(GameCommand.PlayRound command) {
+        var currentEvents = gameEventRepository.findAll(command.gameId());
         var gameMove = determineGameMove();
-        var winner = determineWinner(p.playerMove(), gameMove);
-        return new GameEvent.RoundPlayed(p.gameId(), p.playerMove(), gameMove, winner);
+        var winner = determineWinner(command.playerMove(), gameMove);
+        var newEvent = new GameEvent.RoundPlayed(command.gameId(), command.playerMove(), gameMove, winner);
+        gameEventRepository.appendEvent(command.gameId(), newEvent);
+        var newEvents = appendElement(currentEvents.castToList(), newEvent);
+        return new GameState(newEvent.gameId(), newEvents);
     }
 
     private Move determineGameMove() {

@@ -3,8 +3,6 @@ package com.rpsg.model;
 import com.rpsg.infra.GameEventInMemoryRepository;
 import com.rpsg.model.GameCommand.PlayRound;
 import com.rpsg.model.GameCommand.StartGame;
-import com.rpsg.model.GameEvent.GameStarted;
-import com.rpsg.model.GameEvent.RoundPlayed;
 import com.rpsg.model.handlers.EndGameHandler;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import com.rpsg.model.handlers.StartGameHandler;
@@ -17,27 +15,20 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static com.rpsg.model.Winner.DRAW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameBasicScenarioTest {
 
     private static final GameEventRepository gameEventRepository = new GameEventInMemoryRepository();
-    private static final GameCommandHandler handler = new GameCommandHandler(
-            gameEventRepository, new StartGameHandler(), new PlayRoundHandler(), new EndGameHandler()
-    );
-    private static GameStarted gameStarted;
+    private static final StartGameHandler startGameHandler = new StartGameHandler(gameEventRepository);
+    private static final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository);
+    private static final EndGameHandler endGameHandler = new EndGameHandler(gameEventRepository);
+
+    private static GameState initialState;
 
     private static int humanWins = 0;
     private static int gameWins = 0;
     private static int draws = 0;
-
-    static private <T extends GameEvent> T handleAndCastLastEvent(GameCommand command, Class<T> type) {
-        var state = handler.handle(command);
-        var lastEvent = state.events().getLast();
-        assertTrue(type.isInstance(lastEvent));
-        return type.cast(lastEvent);
-    }
 
     @BeforeAll
     public static void startGame() {
@@ -47,59 +38,56 @@ public class GameBasicScenarioTest {
         // given
         var startGame = new StartGame("Player1");
         // when
-        gameStarted = handleAndCastLastEvent(startGame, GameStarted.class);
+        initialState = startGameHandler.handle(startGame);
         // then
-        assertNotNull(gameStarted.gameId());
-        assertEquals("Player1", gameStarted.player());
-    }
-
-    private void recordWinner(Winner winner) {
-        switch (winner) {
-            case DRAW -> draws = draws + 1;
-            case GAME -> gameWins = gameWins + 1;
-            case HUMAN -> humanWins = humanWins + 1;
-        }
+        assertNotNull(initialState.gameId());
+        var expectedEvent = (GameEvent.GameStarted) initialState.events().getFirst();
+        assertEquals("Player1", expectedEvent.player());
+        assertNotNull(initialState.gameId());
     }
 
     @Test
     @Order(1)
     public void playRound1() {
         // given
-        var playRound = new PlayRound(gameStarted.gameId(), Move.ROCK);
+        var playRound = new PlayRound(initialState.gameId(), Move.ROCK);
         // when
-        var event = handleAndCastLastEvent(playRound, RoundPlayed.class);
+        var newState = playRoundHandler.handle(playRound);
         // then
-        assertEquals(Move.ROCK, event.playerMove());
-        recordWinner(event.winner());
+        assertEquals(initialState.gameId(), newState.gameId());
+        var expectedEvent = (GameEvent.RoundPlayed) newState.events().getLast();
+        assertEquals(Move.ROCK, expectedEvent.playerMove());
+        recordWinner(expectedEvent.winner());
     }
 
     @Test
     @Order(2)
     public void playRound2() {
         // given
-        var playRound = new PlayRound(gameStarted.gameId(), Move.ROCK);
+        var playRound = new PlayRound(initialState.gameId(), Move.ROCK);
         // when
-        var event = handleAndCastLastEvent(playRound, RoundPlayed.class);
+        var newState = playRoundHandler.handle(playRound);
         // then
-        assertEquals(Move.ROCK, event.playerMove());
-        recordWinner(event.winner());
+        assertEquals(initialState.gameId(), newState.gameId());
+        var expectedEvent = (GameEvent.RoundPlayed) newState.events().getLast();
+        assertEquals(Move.ROCK, expectedEvent.playerMove());
+        recordWinner(expectedEvent.winner());
     }
 
     @Test
     @Order(3)
     public void endGame() {
         // given
-        var endGame = new GameCommand.EndGame(gameStarted.gameId());
+        var endGame = new GameCommand.EndGame(initialState.gameId());
         // when
-        var state = handler.handle(endGame);
-        // System.out.println("Final state: " + state.events());
+        var newState = endGameHandler.handle(endGame);
         // then state
-        assertEquals(4, state.events().size());
-        assertNotNull(state.gameId());
+        assertEquals(4, newState.events().size());
+        assertNotNull(newState.gameId());
         // then last event
-        var event = (GameEvent.GameEnded) state.events().getLast();
+        assertEquals(initialState.gameId(), newState.gameId());
+        var event = (GameEvent.GameEnded) newState.events().getLast();
         assertNotNull(event.gameId());
-        // System.out.println("humanWins: " + humanWins + ", gameWins: " + gameWins + ", draws: " + draws);
         if (humanWins == gameWins) {
             assertEquals(DRAW, event.winner());
             return;
@@ -112,5 +100,14 @@ public class GameBasicScenarioTest {
         }
         assertEquals(expectedWinner, event.winner());
     }
+
+    private void recordWinner(Winner winner) {
+        switch (winner) {
+            case DRAW -> draws = draws + 1;
+            case GAME -> gameWins = gameWins + 1;
+            case HUMAN -> humanWins = humanWins + 1;
+        }
+    }
+
 
 }
