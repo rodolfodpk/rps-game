@@ -3,91 +3,62 @@ package com.rpsg.model;
 import com.rpsg.model.GameCommand.EndGame;
 import com.rpsg.model.GameCommand.PlayRound;
 import com.rpsg.model.GameCommand.StartGame;
-import com.rpsg.model.GameEvent.GameEnded;
-import com.rpsg.model.GameEvent.GameStarted;
-import com.rpsg.model.GameEvent.RoundPlayed;
-import org.eclipse.collections.impl.factory.Bags;
+import com.rpsg.model.handlers.EndGameHandler;
+import com.rpsg.model.handlers.PlayRoundHandler;
+import com.rpsg.model.handlers.StartGameHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Collectors;
+import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Component
 public class GameCommandHandler {
 
-    private final Random random = new Random();
-
     private final GameEventRepository gameEventRepository;
+    private final StartGameHandler startGameHandler;
+    private final PlayRoundHandler playRoundHandler;
+    private final EndGameHandler endGameHandler;
 
-    public GameCommandHandler(GameEventRepository gameEventRepository) {
+    public GameCommandHandler(GameEventRepository gameEventRepository, StartGameHandler startGameHandler, PlayRoundHandler playRoundHandler, EndGameHandler endGameHandler) {
         this.gameEventRepository = gameEventRepository;
+        this.startGameHandler = startGameHandler;
+        this.playRoundHandler = playRoundHandler;
+        this.endGameHandler = endGameHandler;
     }
 
     public GameState handle(GameCommand command) {
-        String gameId;
-        var events = switch (command) {
+        var newState = switch (command) {
             case StartGame s -> {
-                gameId = UUID.randomUUID().toString();
-                yield List.of(new GameStarted(gameId, s.player()));
+                var newEvent = startGameHandler.handle(s);
+                gameEventRepository.appendEvent(newEvent.gameId(), newEvent);
+                yield new GameState(newEvent.gameId(), List.of(newEvent));
             }
             case PlayRound p -> {
-                gameId = p.gameId();
-                yield handlePlayRound(p);
+                var currentEvents = gameEventRepository.findAll(p.gameId());
+                var newEvent = playRoundHandler.handle(p, currentEvents.toImmutable());
+                gameEventRepository.appendEvent(p.gameId(), newEvent);
+                var newEvents = appendElement(currentEvents.castToList(), newEvent);
+                yield new GameState(newEvent.gameId(), newEvents);
             }
-            case EndGame e -> {
-                gameId = e.gameId();
-                yield handEndGame(e);
+            case EndGame p -> {
+                var currentEvents = gameEventRepository.findAll(p.gameId());
+                var newEvent = endGameHandler.handle(p, currentEvents.toImmutable());
+                gameEventRepository.appendEvent(p.gameId(), newEvent);
+                var newEvents = appendElement(currentEvents.castToList(), newEvent);
+                yield new GameState(newEvent.gameId(), newEvents);
             }
         };
-        gameEventRepository.appendEvent(gameId, events.getLast());
-        return new GameState(gameId, events);
+        // System.out.println("State: " + newState.events().size());
+        return newState;
     }
 
-    private List<GameEvent> handlePlayRound(PlayRound p) {
-        var gameEvents = gameEventRepository.findAll(p.gameId()).toList();
-        var gameMove = determineGameMove(p.playerMove());
-        var winner = determineWinner(p.playerMove(), gameMove);
-        gameEvents.add(new RoundPlayed(p.gameId(), p.playerMove(), gameMove, winner));
-        return gameEvents;
-    }
-
-    private List<GameEvent> handEndGame(EndGame e) {
-        // System.out.println("End ---");
-        var gameEvents = gameEventRepository.findAll(e.gameId()).toList();
-        // filter RoundPlayed instances
-        var roundPlayedEvents = gameEvents.selectInstancesOf(RoundPlayed.class)
-                .collect(RoundPlayed::winner);
-        // System.out.println("    events: " + roundPlayedEvents);
-        var nonDrawEvents = roundPlayedEvents
-                .select(w -> !w.equals(Winner.DRAW));
-        var bag = Bags.mutable.withAll(nonDrawEvents).toImmutableBag();
-        var topWinners = bag.topOccurrences(1);
-        // System.out.println("   topWinners: " + topWinners);
-        Winner winner ;
-        if (topWinners.isEmpty() ||
-                (topWinners.size() == 2 && topWinners.get(0).getTwo() == topWinners.get(1).getTwo())) {
-            winner = Winner.DRAW;
-        } else {
-            winner = topWinners.get(0).getOne();
-        }
-        gameEvents.add(new GameEnded(e.gameId(), winner));
-        return gameEvents;
-    }
-
-    private Move determineGameMove(Move move) {
-        return Move.values()[random.nextInt(Move.values().length)];
-    }
-
-    private Winner determineWinner(Move humanMove, Move gameMove) {
-        if (humanMove == gameMove) {
-            return Winner.DRAW;
-        }
-        return switch (humanMove) {
-            case ROCK -> gameMove == Move.SCISSORS ? Winner.HUMAN : Winner.GAME;
-            case PAPER -> gameMove == Move.ROCK ? Winner.HUMAN : Winner.GAME;
-            case SCISSORS -> gameMove == Move.PAPER ? Winner.HUMAN : Winner.GAME;
-        };
+    private static <T> List<T> appendElement(List<T> original, T newElement) {
+        return Stream.concat(original.stream(), Stream.of(newElement))
+                .collect(Collectors.toList());
     }
 
 }

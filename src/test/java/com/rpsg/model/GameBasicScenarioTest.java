@@ -5,6 +5,9 @@ import com.rpsg.model.GameCommand.PlayRound;
 import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.GameEvent.GameStarted;
 import com.rpsg.model.GameEvent.RoundPlayed;
+import com.rpsg.model.handlers.EndGameHandler;
+import com.rpsg.model.handlers.PlayRoundHandler;
+import com.rpsg.model.handlers.StartGameHandler;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -21,7 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameBasicScenarioTest {
 
-    private static final GameCommandHandler handler = new GameCommandHandler(new GameEventInMemoryRepository());
+    private static final GameEventRepository gameEventRepository = new GameEventInMemoryRepository();
+    private static final GameCommandHandler handler = new GameCommandHandler(
+            gameEventRepository, new StartGameHandler(), new PlayRoundHandler(), new EndGameHandler()
+    );
     private static GameStarted gameStarted;
 
     private static int humanWins = 0;
@@ -33,6 +39,20 @@ public class GameBasicScenarioTest {
         var lastEvent = state.events().getLast();
         assertTrue(type.isInstance(lastEvent));
         return type.cast(lastEvent);
+    }
+
+    @BeforeAll
+    public static void startGame() {
+        humanWins = 0;
+        gameWins = 0;
+        draws = 0;
+        // given
+        var startGame = new StartGame("Player1");
+        // when
+        gameStarted = handleAndCastLastEvent(startGame, GameStarted.class);
+        // then
+        assertNotNull(gameStarted.gameId());
+        assertEquals("Player1", gameStarted.player());
     }
 
     private void recordAndAssert(Move playerMove, Move gameMove, Winner winner) {
@@ -51,18 +71,6 @@ public class GameBasicScenarioTest {
             }
         }
         // System.out.println("Player move: " + playerMove + ", Game move: " + gameMove + ", Winner: " + winner);
-    }
-
-  @BeforeAll
-  public static void startGame() {
-        humanWins =0; gameWins = 0; draws = 0;
-        // given
-        var startGame = new StartGame("Player1");
-        // when
-        gameStarted = handleAndCastLastEvent(startGame, GameStarted.class);
-        // then
-        assertNotNull(gameStarted.gameId());
-        assertEquals("Player1", gameStarted.player());
     }
 
     @Test
@@ -96,8 +104,9 @@ public class GameBasicScenarioTest {
         var endGame = new GameCommand.EndGame(gameStarted.gameId());
         // when
         var state = handler.handle(endGame);
+        // System.out.println("Final state: " + state.events());
         // then state
-        assertEquals(state.events().size(), 4);
+        assertEquals(4, state.events().size());
         assertNotNull(state.gameId());
         // then last event
         var event = (GameEvent.GameEnded) state.events().getLast();
