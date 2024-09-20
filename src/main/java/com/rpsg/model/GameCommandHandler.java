@@ -33,38 +33,46 @@ public class GameCommandHandler {
             }
             case PlayRound p -> {
                 gameId = p.gameId();
-                var gameEvents = gameEventRepository.findAll(gameId).toList();
-                var gameMove = determineGameMove(p.playerMove());
-                var winner = determineWinner(p.playerMove(), gameMove);
-                gameEvents.add(new RoundPlayed(p.gameId(), p.playerMove(), gameMove, winner));
-                yield gameEvents;
+                yield handlePlayRound(p);
             }
             case EndGame e -> {
-                // System.out.println("End ---");
                 gameId = e.gameId();
-                var gameEvents = gameEventRepository.findAll(gameId).toList();
-                // filter RoundPlayed instances
-                var roundPlayedEvents = gameEvents.selectInstancesOf(RoundPlayed.class)
-                        .collect(RoundPlayed::winner);
-                // System.out.println("    events: " + roundPlayedEvents);
-                var nonDrawEvents = roundPlayedEvents
-                        .select(w -> !w.equals(Winner.DRAW));
-                var bag = Bags.mutable.withAll(nonDrawEvents).toImmutableBag();
-                var topWinners = bag.topOccurrences(1);
-                // System.out.println("   topWinners: " + topWinners);
-                Winner winner ;
-                if (topWinners.isEmpty() ||
-                        (topWinners.size() == 2 && topWinners.get(0).getTwo() == topWinners.get(1).getTwo())) {
-                    winner = Winner.DRAW;
-                } else {
-                    winner = topWinners.get(0).getOne();
-                }
-                gameEvents.add(new GameEnded(e.gameId(), winner));
-                yield gameEvents;
+                yield handEndGame(e);
             }
         };
         gameEventRepository.appendEvent(gameId, events.getLast());
         return new GameState(gameId, events);
+    }
+
+    private List<GameEvent> handlePlayRound(PlayRound p) {
+        var gameEvents = gameEventRepository.findAll(p.gameId()).toList();
+        var gameMove = determineGameMove(p.playerMove());
+        var winner = determineWinner(p.playerMove(), gameMove);
+        gameEvents.add(new RoundPlayed(p.gameId(), p.playerMove(), gameMove, winner));
+        return gameEvents;
+    }
+
+    private List<GameEvent> handEndGame(EndGame e) {
+        // System.out.println("End ---");
+        var gameEvents = gameEventRepository.findAll(e.gameId()).toList();
+        // filter RoundPlayed instances
+        var roundPlayedEvents = gameEvents.selectInstancesOf(RoundPlayed.class)
+                .collect(RoundPlayed::winner);
+        // System.out.println("    events: " + roundPlayedEvents);
+        var nonDrawEvents = roundPlayedEvents
+                .select(w -> !w.equals(Winner.DRAW));
+        var bag = Bags.mutable.withAll(nonDrawEvents).toImmutableBag();
+        var topWinners = bag.topOccurrences(1);
+        // System.out.println("   topWinners: " + topWinners);
+        Winner winner ;
+        if (topWinners.isEmpty() ||
+                (topWinners.size() == 2 && topWinners.get(0).getTwo() == topWinners.get(1).getTwo())) {
+            winner = Winner.DRAW;
+        } else {
+            winner = topWinners.get(0).getOne();
+        }
+        gameEvents.add(new GameEnded(e.gameId(), winner));
+        return gameEvents;
     }
 
     private Move determineGameMove(Move move) {
