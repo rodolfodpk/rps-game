@@ -10,16 +10,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GameRulesTest implements AbstractScenarioTest {
+public class GameRulesTest extends AbstractScenarioTest {
 
-    private static final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
-    private static final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
+    private final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
+    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
 
     @ParameterizedTest(name = "When human move is {0} and game move is {1} then the winner is {2}")
     @CsvSource({
@@ -35,15 +36,16 @@ public class GameRulesTest implements AbstractScenarioTest {
     })
     void testMoveCombination(String humanMove, String gameMove, String expectedWinner) {
         // given
+        var gameID = UUID.randomUUID().toString();
         var startGame = new StartGame("Player1");
-        var initialState = startGameHandler.handle(startGame);
+        var initialState = startGameHandler.handle(gameID, startGame);
         var gameStartedEvent = (GameEvent.GameStarted) initialState.events().getFirst();
         // when
-        var humanPlay = new PlayRound(gameStartedEvent.gameId(), Move.valueOf(humanMove));
+        var humanPlay = new PlayRound(Move.valueOf(humanMove));
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.valueOf(gameMove));
-        var newState = playRoundHandler.handle(humanPlay);
+        var newState = playRoundHandler.handle(gameID, humanPlay);
         var playEvent = newState.events().getLast();
-        var endState = endGameHandler.handle(new GameCommand.EndGame((initialState.gameId())));
+        var endState = endGameHandler.handle(gameID, new GameCommand.EndGame());
         var endGameEvent = endState.events().getLast();
         // then play event
         if (Objects.requireNonNull(playEvent) instanceof GameEvent.RoundPlayed roundPlayed) {

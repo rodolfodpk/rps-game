@@ -19,8 +19,8 @@ public class EndGameHandler implements AbstractCommandHandler<GameCommand.EndGam
         this.gameEventRepository = gameEventRepository;
     }
 
-    public GameState handle(GameCommand.EndGame command) {
-        var currentEvents = gameEventRepository.findAll(command.gameId());
+    public GameState handle(String gameId, GameCommand.EndGame command) {
+        var currentEvents = gameEventRepository.findAll(gameId);
         // filter RoundPlayed instances
         var roundPlayedEvents = currentEvents.selectInstancesOf(GameEvent.RoundPlayed.class)
                 .collect(GameEvent.RoundPlayed::winner);
@@ -34,8 +34,8 @@ public class EndGameHandler implements AbstractCommandHandler<GameCommand.EndGam
         } else {
             winner = topWinners.get(0).getOne();
         }
-        var newEvent = new GameEvent.GameEnded(command.gameId(), winner);
-        gameEventRepository.appendEvent(command.gameId(), newEvent);
+        var newEvent = new GameEvent.GameEnded(gameId, winner);
+        gameEventRepository.appendEvent(gameId, newEvent);
         var newEvents = appendElement(currentEvents.castToList(), newEvent);
         return new GameState(newEvent.gameId(), newEvents);
     }

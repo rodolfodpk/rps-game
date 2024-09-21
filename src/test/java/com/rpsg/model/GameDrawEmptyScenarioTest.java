@@ -1,23 +1,24 @@
 package com.rpsg.model;
 
 import com.rpsg.model.GameCommand.StartGame;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static com.rpsg.model.Winner.DRAW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GameDrawEmptyScenarioTest implements AbstractScenarioTest {
+public class GameDrawEmptyScenarioTest extends AbstractScenarioTest {
 
-    private static GameState initialState;
+    private GameState initialState;
 
-    @BeforeAll
-    public static void startGame() {
+    @Test
+    @Order(1)
+    public void startGame() {
         // given
         var startGame = new StartGame("Player1");
         // when
-        initialState = startGameHandler.handle(startGame);
+        initialState = startGameHandler.handle(gameID, startGame);
         // then
         assertEquals(1, initialState.events().size());
         assertNotNull(initialState.gameId());
@@ -27,11 +28,12 @@ public class GameDrawEmptyScenarioTest implements AbstractScenarioTest {
     }
 
     @Test
+    @Order(2)
     public void endGameWithNoPlaysShouldBeDRAW() {
         // given
-        var endGame = new GameCommand.EndGame(initialState.gameId());
+        var endGame = new GameCommand.EndGame();
         // when
-        var newState = endGameHandler.handle(endGame);
+        var newState = endGameHandler.handle(gameID, endGame);
         // then state
         assertEquals(2, newState.events().size());
         assertNotNull(newState.gameId());

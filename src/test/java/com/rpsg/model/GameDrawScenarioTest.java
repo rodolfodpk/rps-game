@@ -4,7 +4,6 @@ import com.rpsg.model.GameCommand.PlayRound;
 import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,18 +16,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GameDrawScenarioTest implements AbstractScenarioTest {
+public class GameDrawScenarioTest extends AbstractScenarioTest {
 
-    private static final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
-    private static final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
-    private static GameState initialState;
+    private final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
+    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
 
-    @BeforeAll
-    public static void startGame() {
+    @Test
+    @Order(1)
+    public void startGame() {
         // given
         var startGame = new StartGame("Player1");
         // when
-        initialState = startGameHandler.handle(startGame);
+        var initialState = startGameHandler.handle(gameID, startGame);
         // then
         assertEquals(1, initialState.events().size());
         assertNotNull(initialState.gameId());
@@ -41,13 +40,13 @@ public class GameDrawScenarioTest implements AbstractScenarioTest {
     @Order(1)
     public void playRound1Rock() {
         // given
-        var playRound = new PlayRound(initialState.gameId(), Move.ROCK);
+        var playRound = new PlayRound(Move.ROCK);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.ROCK);
         // when
-        var newState = playRoundHandler.handle(playRound);
-        // then
+        var newState = playRoundHandler.handle(gameID, playRound);
+        // then state
         assertEquals(2, newState.events().size());
-        assertEquals(initialState.gameId(), newState.gameId());
+        // then event
         var latestEvent = (GameEvent.RoundPlayed) newState.events().getLast();
         assertEquals(Move.ROCK, latestEvent.playerMove());
         assertEquals(Move.ROCK, latestEvent.gameMove());
@@ -58,13 +57,13 @@ public class GameDrawScenarioTest implements AbstractScenarioTest {
     @Order(2)
     public void playRound2Paper() {
         // given
-        var playRound = new PlayRound(initialState.gameId(), Move.PAPER);
+        var playRound = new PlayRound(Move.PAPER);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var newState = playRoundHandler.handle(playRound);
-        // then
+        var newState = playRoundHandler.handle(gameID, playRound);
+        // then state
         assertEquals(3, newState.events().size());
-        assertEquals(initialState.gameId(), newState.gameId());
+        // then event
         var latestEvent = (GameEvent.RoundPlayed) newState.events().getLast();
         assertEquals(Move.PAPER, latestEvent.playerMove());
         assertEquals(Move.PAPER, latestEvent.gameMove());
@@ -75,13 +74,12 @@ public class GameDrawScenarioTest implements AbstractScenarioTest {
     @Order(3)
     public void endGameShouldBeDRAW() {
         // given
-        var endGame = new GameCommand.EndGame(initialState.gameId());
+        var endGame = new GameCommand.EndGame();
         // when
-        var newState = endGameHandler.handle(endGame);
+        var newState = endGameHandler.handle(gameID, endGame);
         // then state
         assertEquals(4, newState.events().size());
         assertNotNull(newState.gameId());
-        assertEquals(initialState.gameId(), newState.gameId());
         // then last event
         var latestEvent = (GameEvent.GameEnded) newState.events().getLast();
         assertNotNull(latestEvent.gameId());

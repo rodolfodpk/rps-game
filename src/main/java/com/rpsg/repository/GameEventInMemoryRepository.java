@@ -1,4 +1,4 @@
-package com.rpsg.infra;
+package com.rpsg.repository;
 
 import com.rpsg.model.GameEvent;
 import org.eclipse.collections.api.list.ImmutableList;

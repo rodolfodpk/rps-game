@@ -15,6 +15,6 @@ public interface AbstractCommandHandler<C extends GameCommand> {
                 .collect(Collectors.toList());
     }
 
-    GameState handle(C command);
+    GameState handle(String gameId, C command);
 
 }

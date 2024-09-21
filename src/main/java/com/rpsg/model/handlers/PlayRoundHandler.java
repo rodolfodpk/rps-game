@@ -21,12 +21,15 @@ public class PlayRoundHandler implements AbstractCommandHandler<GameCommand.Play
         this.gameMoveDecider = gameMoveDecider;
     }
 
-    public GameState handle(GameCommand.PlayRound command) {
-        var currentEvents = gameEventRepository.findAll(command.gameId());
+    public GameState handle(String gameId, GameCommand.PlayRound command) {
+        var currentEvents = gameEventRepository.findAll(gameId);
+        System.out.println("-- will play. " +
+                "\n Events: " + currentEvents +
+                "\n gameID: " + gameId);
         var gameMove = gameMoveDecider.determineGameMove();
         var winner = determineWinner(command.playerMove(), gameMove);
-        var newEvent = new GameEvent.RoundPlayed(command.gameId(), command.playerMove(), gameMove, winner);
-        gameEventRepository.appendEvent(command.gameId(), newEvent);
+        var newEvent = new GameEvent.RoundPlayed(gameId, command.playerMove(), gameMove, winner);
+        gameEventRepository.appendEvent(gameId, newEvent);
         var newEvents = appendElement(currentEvents.castToList(), newEvent);
         return new GameState(newEvent.gameId(), newEvents);
     }
