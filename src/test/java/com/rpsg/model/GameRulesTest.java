@@ -1,12 +1,9 @@
 package com.rpsg.model;
 
-import com.rpsg.infra.GameEventInMemoryRepository;
 import com.rpsg.model.GameCommand.PlayRound;
 import com.rpsg.model.GameCommand.StartGame;
-import com.rpsg.model.handlers.EndGameHandler;
 import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
-import com.rpsg.model.handlers.StartGameHandler;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,13 +16,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GameRulesTest {
+public class GameRulesTest implements AbstractScenarioTest {
 
-    private static final GameEventRepository gameEventRepository = new GameEventInMemoryRepository();
-    private static final StartGameHandler startGameHandler = new StartGameHandler(gameEventRepository);
     private static final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
     private static final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
-    private static final EndGameHandler endGameHandler = new EndGameHandler(gameEventRepository);
 
     @ParameterizedTest(name = "When human move is {0} and game move is {1} then the winner is {2}")
     @CsvSource({
