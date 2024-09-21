@@ -11,7 +11,7 @@
 
 ## Test
 
-* Just run 'mvn clean verify'
+* Just run './mvnw clean verify'
 
 ## Notes
 
