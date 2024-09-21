@@ -4,8 +4,6 @@ import com.rpsg.model.GameCommand.PlayRound;
 import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -16,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameRulesTest extends AbstractScenarioTest {
 
     private final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
