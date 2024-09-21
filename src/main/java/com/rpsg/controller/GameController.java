@@ -15,12 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.UUID;
 
 @RestController
 public class GameController {
 
-    private static final AtomicInteger inc = new AtomicInteger(0);
     private final StartGameHandler startGameHandler;
     private final PlayRoundHandler playRoundHandler;
     private final EndGameHandler endGameHandler;
@@ -36,7 +35,7 @@ public class GameController {
 
     @PostMapping("/startGame")
     public Mono<GameState> startGame(@RequestBody GameCommand.StartGame command) {
-        var gameId = inc.incrementAndGet() + "";
+        var gameId = UUID.randomUUID().toString();
         var gameState = startGameHandler.handle(gameId, command);
         return Mono.just(gameState);
     }
