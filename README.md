@@ -17,8 +17,10 @@
 
 ## Notes
 
-* I focused on the domain model. I used command, events and state approach. It's fully tested (~100%).
-* For the sake of simplicity (and time to deliver), I decided to use a MultiMap from Eclipse Collections instead of a
-  distributed cache like KeyDb (since Redis is not OSS anymore)
-
+* I focused more on the domain model. I used command, events and state approach. It's fully tested (~100%).
+* For the sake of simplicity and time to deliver:
+  1. Request and responses are java records from the model package. There no distinction between requests / responses from model classes. 
+  2. I decided to use a simplistic and possible naive GameEventRepository implementation. Using MultiMap from Eclipse Collections instead of a distributed cache like KeyDb (since Redis is not OSS anymore)
+  3. It's not production ready.
+  
 Thanks!
