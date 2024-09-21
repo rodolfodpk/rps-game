@@ -21,6 +21,7 @@
 * For the sake of simplicity and time to deliver:
   1. Request and responses are java records from the model package. There no distinction between requests / responses from model classes. 
   2. I decided to use a simplistic and possible naive GameEventRepository implementation. Using MultiMap from Eclipse Collections instead of a distributed cache like KeyDb (since Redis is not OSS anymore)
-  3. It's not production ready.
+  3. I didn't write any load test.
+  4. It's far from production ready.
   
 Thanks!
