@@ -22,3 +22,5 @@ public sealed interface GameEvent
     }
 
 }
+// Note the Jackson annotations are just in case we need to ser/der in a polymorphic way using ObjectMapper
+// For example: a new GameEventRepository implementation could leverage it

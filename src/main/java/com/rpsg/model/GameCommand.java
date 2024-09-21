@@ -24,3 +24,4 @@ public sealed interface GameCommand
 
 }
 
+// Note the Jackson annotations are just in case we need to ser/der in a polymorphic way using ObjectMapper
