@@ -11,7 +11,7 @@
 
 ## Test
 
-* Just run './mvnw clean verify'
+* Just run ```./mvnw clean verify```
 
 ## Notes
 
