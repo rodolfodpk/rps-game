@@ -62,18 +62,18 @@ public class GameDrawScenarioTest {
 
     @Test
     @Order(2)
-    public void playRound2Rock() {
+    public void playRound2Paper() {
         // given
-        var playRound = new PlayRound(initialState.gameId(), Move.ROCK);
-        when(gameMoveDecider.determineGameMove()).thenReturn(Move.ROCK);
+        var playRound = new PlayRound(initialState.gameId(), Move.PAPER);
+        when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
         var newState = playRoundHandler.handle(playRound);
         // then
         assertEquals(3, newState.events().size());
         assertEquals(initialState.gameId(), newState.gameId());
         var latestEvent = (GameEvent.RoundPlayed) newState.events().getLast();
-        assertEquals(Move.ROCK, latestEvent.playerMove());
-        assertEquals(Move.ROCK, latestEvent.gameMove());
+        assertEquals(Move.PAPER, latestEvent.playerMove());
+        assertEquals(Move.PAPER, latestEvent.gameMove());
         assertEquals(DRAW, latestEvent.winner());
     }
 
