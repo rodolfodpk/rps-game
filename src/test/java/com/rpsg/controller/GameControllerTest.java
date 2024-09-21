@@ -1,6 +1,5 @@
 package com.rpsg.controller;
 
-import com.rpsg.model.GameCommand;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
 import org.junit.jupiter.api.MethodOrderer;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
@@ -32,11 +30,12 @@ public class GameControllerTest {
     @Test
     @Order(1)
     public void startGame() {
-        var startGameCommand = new GameCommand.StartGame("John");
         webTestClient
                 .post()
-                .uri("/startGame")
-                .body(Mono.just(startGameCommand), GameCommand.StartGame.class)
+                .uri(uriBuilder -> uriBuilder
+                        .path("/startGame")
+                        .queryParam("playerName", "John")
+                        .build(gameID))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(GameState.class)
@@ -46,11 +45,12 @@ public class GameControllerTest {
     @Test
     @Order(2)
     public void playRound() {
-        var playRoundCommand = new GameCommand.PlayRound(ROCK);
         webTestClient
                 .put()
-                .uri("/playRound/" + gameID)
-                .body(Mono.just(playRoundCommand), GameCommand.PlayRound.class)
+                .uri(uriBuilder -> uriBuilder
+                        .path("/playRound/{gameID}")
+                        .queryParam("playerMove", ROCK)
+                        .build(gameID))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -69,11 +69,9 @@ public class GameControllerTest {
     @Test
     @Order(3)
     public void endGame() {
-        var endGameCommand = new GameCommand.EndGame();
         webTestClient
                 .put()
                 .uri("/endGame/" + gameID)
-                .body(Mono.just(endGameCommand), GameCommand.EndGame.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
