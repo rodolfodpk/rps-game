@@ -87,8 +87,8 @@ public class GameDrawScenarioTest {
         // then state
         assertEquals(4, newState.events().size());
         assertNotNull(newState.gameId());
-        // then last event
         assertEquals(initialState.gameId(), newState.gameId());
+        // then last event
         var latestEvent = (GameEvent.GameEnded) newState.events().getLast();
         assertNotNull(latestEvent.gameId());
         assertEquals(DRAW, latestEvent.winner());
