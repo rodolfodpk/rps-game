@@ -11,9 +11,9 @@ public class GameMoveDeciderTest {
 
     @Test
     void determineGameMove_ReturnsRock() {
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             Move move = gameMoveDecider.determineGameMove();
             assertTrue(move == Move.ROCK || move == Move.PAPER || move == Move.SCISSORS);
         }
-    }  
+    }
 }

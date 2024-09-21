@@ -1,9 +1,6 @@
 package com.rpsg.model;
 
-import com.rpsg.infra.GameEventInMemoryRepository;
 import com.rpsg.model.GameCommand.StartGame;
-import com.rpsg.model.handlers.EndGameHandler;
-import com.rpsg.model.handlers.StartGameHandler;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,11 +8,8 @@ import static com.rpsg.model.Winner.DRAW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GameDrawEmptyScenarioTest {
+public class GameDrawEmptyScenarioTest implements AbstractScenarioTest {
 
-    private static final GameEventRepository gameEventRepository = new GameEventInMemoryRepository();
-    private static final StartGameHandler startGameHandler = new StartGameHandler(gameEventRepository);
-    private static final EndGameHandler endGameHandler = new EndGameHandler(gameEventRepository);
     private static GameState initialState;
 
     @BeforeAll
