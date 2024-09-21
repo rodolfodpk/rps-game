@@ -33,7 +33,7 @@ public class GameDrawEmptyScenarioTest {
     }
 
     @Test
-    public void endGameShouldBeDRAW() {
+    public void endGameWithNoPlaysShouldBeDRAW() {
         // given
         var endGame = new GameCommand.EndGame(initialState.gameId());
         // when
