@@ -1,11 +1,11 @@
-import { sleep, check } from 'k6';
+import {check} from 'k6';
 import http from 'k6/http';
 
 export let options = {
     stages: [
-        { duration: '1m', target: 100 }, // ramp up to N users over N minute
-        { duration: '1m', target: 1000 }, // stay at N users for 5 minutes
-        { duration: '1m', target: 0 }, // ramp down to 0 users over 1 minute
+        {duration: '1m', target: 100}, // ramp up to N users over N minute
+        {duration: '1m', target: 1000}, // stay at N users for 5 minutes
+        {duration: '1m', target: 0}, // ramp down to 0 users over 1 minute
     ],
 };
 
@@ -16,9 +16,9 @@ export default function () {
 
     // Start a game
     let startGameRes = http.post(`${BASE_URL}/startGame?playerName=${playerName}`);
-    check(startGameRes, { 'Game started successfully': (resp) => resp.status === 200 });
+    check(startGameRes, {'Game started successfully': (resp) => resp.status === 200});
 
-    let gameId = startGameRes.json('gameId'); // adjust this line to match the structure of your response
+    let gameId = startGameRes.toString();
 
     // sleep(1);
 
@@ -27,13 +27,13 @@ export default function () {
 
     // Play a round
     let playRoundRes = http.put(`${BASE_URL}/playRound/${gameId}?playerMove=${playerMove}`);
-    check(playRoundRes, { 'Move made successfully': (resp) => resp.status === 200 });
+    check(playRoundRes, {'Move made successfully': (resp) => resp.status === 200});
 
     // sleep(1);
 
     // End the game
     let endGameRes = http.put(`${BASE_URL}/endGame/${gameId}`);
-    check(endGameRes, { 'Game ended successfully': (resp) => resp.status === 200 });
+    check(endGameRes, {'Game ended successfully': (resp) => resp.status === 200});
 
     // sleep(1);
 }

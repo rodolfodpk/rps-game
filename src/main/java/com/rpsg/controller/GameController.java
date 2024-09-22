@@ -1,6 +1,7 @@
 package com.rpsg.controller;
 
 import com.rpsg.model.GameCommand;
+import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
 import com.rpsg.model.handlers.EndGameHandler;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.UUID;
 
@@ -37,22 +39,22 @@ public class GameController {
     }
 
     @PostMapping("/startGame")
-    public Mono<GameState> startGame(@RequestParam("playerName") String playerName) {
+    public Mono<GameEvent.GameStarted> startGame(@RequestParam("playerName") String playerName) {
         var gameId = UUID.randomUUID().toString();
-        var gameState = startGameHandler.handle(gameId, new GameCommand.StartGame(playerName));
-        return Mono.just(gameState);
+        return Mono.fromCallable(() -> startGameHandler.handle(gameId, new GameCommand.StartGame(playerName)))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     @PutMapping("/playRound/{gameId}")
-    public Mono<ResponseEntity<GameState>> playRound(@PathVariable String gameId,
-                                                     @RequestParam("playerMove") Move playerMove) {
+    public Mono<ResponseEntity<GameEvent.RoundPlayed>> playRound(@PathVariable String gameId,
+                                                                 @RequestParam("playerMove") Move playerMove) {
         var gameState = playRoundHandler.handle(gameId, new GameCommand.PlayRound(playerMove));
         return Mono.just(new ResponseEntity<>(gameState, HttpStatus.OK));
     }
 
     @PutMapping("/endGame/{gameId}")
     public Mono<ResponseEntity<GameState>> endGame(@PathVariable String gameId) {
-        var gameState = endGameHandler.handle(gameId, endGameCommand);
+        var gameState = endGameHandler.handle(gameId);
         return Mono.just(new ResponseEntity<>(gameState, HttpStatus.OK));
     }
 }

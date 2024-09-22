@@ -3,13 +3,10 @@ package com.rpsg.model.handlers;
 import com.rpsg.model.GameCommand;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameEventRepository;
-import com.rpsg.model.GameState;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
-public class StartGameHandler implements AbstractCommandHandler<GameCommand.StartGame> {
+public class StartGameHandler {
 
     private final GameEventRepository gameEventRepository;
 
@@ -17,10 +14,10 @@ public class StartGameHandler implements AbstractCommandHandler<GameCommand.Star
         this.gameEventRepository = gameEventRepository;
     }
 
-    public GameState handle(String gameId, GameCommand.StartGame command) {
+    public GameEvent.GameStarted handle(String gameId, GameCommand.StartGame command) {
         var newEvent = new GameEvent.GameStarted(gameId, command.player());
         gameEventRepository.appendEvent(gameId, newEvent);
-        return new GameState(gameId, List.of(newEvent));
+        return newEvent;
     }
 
 }

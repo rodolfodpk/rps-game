@@ -1,6 +1,5 @@
 package com.rpsg.model.handlers;
 
-import com.rpsg.model.GameCommand;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameEventRepository;
 import com.rpsg.model.GameState;
@@ -8,10 +7,12 @@ import com.rpsg.model.Winner;
 import org.eclipse.collections.impl.factory.Bags;
 import org.springframework.stereotype.Component;
 
-import static com.rpsg.model.handlers.AbstractCommandHandler.appendElement;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
-public class EndGameHandler implements AbstractCommandHandler<GameCommand.EndGame> {
+public class EndGameHandler {
 
     private final GameEventRepository gameEventRepository;
 
@@ -19,7 +20,12 @@ public class EndGameHandler implements AbstractCommandHandler<GameCommand.EndGam
         this.gameEventRepository = gameEventRepository;
     }
 
-    public GameState handle(String gameId, GameCommand.EndGame command) {
+    private static <E extends GameEvent> List<E> appendElement(List<E> original, E newElement) {
+        return Stream.concat(original.stream(), Stream.of(newElement))
+                .collect(Collectors.toList());
+    }
+
+    public GameState handle(String gameId) {
         var currentEvents = gameEventRepository.findAll(gameId);
         // filter RoundPlayed instances
         var roundPlayedEvents = currentEvents.selectInstancesOf(GameEvent.RoundPlayed.class)

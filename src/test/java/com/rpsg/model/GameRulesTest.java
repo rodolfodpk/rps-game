@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,15 +36,15 @@ public class GameRulesTest extends AbstractScenarioTest {
         // given
         var gameID = UUID.randomUUID().toString();
         var startGame = new StartGame("Player1");
-        var initialState = startGameHandler.handle(gameID, startGame);
-        var gameStartedEvent = (GameEvent.GameStarted) initialState.events().getFirst();
+        var gameStartedEvent = startGameHandler.handle(gameID, startGame);
         // when
         var humanPlay = new PlayRound(Move.valueOf(humanMove));
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.valueOf(gameMove));
-        var newState = playRoundHandler.handle(gameID, humanPlay);
-        var playEvent = newState.events().getLast();
-        var endState = endGameHandler.handle(gameID, new GameCommand.EndGame());
+        var playEvent = playRoundHandler.handle(gameID, humanPlay);
+        var endState = endGameHandler.handle(gameID);
         var endGameEvent = endState.events().getLast();
+        // then game started
+        assertNotNull(gameStartedEvent.gameId());
         // then play event
         if (Objects.requireNonNull(playEvent) instanceof GameEvent.RoundPlayed roundPlayed) {
             assertEquals(Move.valueOf(humanMove), roundPlayed.playerMove());

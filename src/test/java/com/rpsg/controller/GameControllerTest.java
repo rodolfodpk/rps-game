@@ -1,7 +1,6 @@
 package com.rpsg.controller;
 
 import com.rpsg.model.GameEvent;
-import com.rpsg.model.GameState;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ public class GameControllerTest {
                         .build(gameID))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(GameState.class)
+                .expectBody(GameEvent.GameStarted.class)
                 .consumeWith(response -> this.gameID = Objects.requireNonNull(response.getResponseBody()).gameId());
     }
 
@@ -55,15 +54,8 @@ public class GameControllerTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.gameId").isEqualTo(gameID)
-                .jsonPath("$.events").isNotEmpty()
-                .jsonPath("$.events[0]['@type']").isEqualTo(GameEvent.GameStarted.class.getSimpleName())
-                .jsonPath("$.events[0].gameId").isEqualTo(gameID)
-                .jsonPath("$.events[1]['@type']").isEqualTo(GameEvent.RoundPlayed.class.getSimpleName())
-                .jsonPath("$.events[1].gameId").isEqualTo(gameID)
-                .jsonPath("$.events[1].playerMove").isEqualTo(ROCK.name())
-                .jsonPath("$.events[1].gameMove").isNotEmpty()
-                .jsonPath("$.events[1].winner").isNotEmpty();
-        ;
+                .jsonPath("$.['@type']").isEqualTo(GameEvent.RoundPlayed.class.getSimpleName())
+                .jsonPath("$.gameId").isEqualTo(gameID);
     }
 
     @Test
