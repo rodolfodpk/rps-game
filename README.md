@@ -24,8 +24,7 @@
 
 * The domain model is fully tested (~100%).
 * For the sake of simplicity and time to deliver:
-    1. Request and responses are java records from the model package. There no distinction between requests / responses
-       from model classes.
+    1. GameState is a model class, but also a controller response.
     2. I decided to use a simplistic and possible naive GameEventRepository implementation. Using MultiMap from Eclipse
        Collections instead of a distributed cache like KeyDb (since Redis is not OSS anymore)
     3. It's far from production ready.
