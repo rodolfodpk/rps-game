@@ -1,7 +1,5 @@
 package com.rpsg.model;
 
-import com.rpsg.model.GameCommand.PlayRound;
-import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,10 +33,10 @@ public class GameRulesTest extends AbstractScenarioTest {
     void testMoveCombination(String humanMove, String gameMove, String expectedWinner) {
         // given
         var gameID = UUID.randomUUID().toString();
-        var startGame = new StartGame("Player1");
-        var gameStartedEvent = startGameHandler.handle(gameID, startGame);
+        var playerName = "Player1";
+        var gameStartedEvent = startGameHandler.handle(gameID, playerName);
         // when
-        var humanPlay = new PlayRound(Move.valueOf(humanMove));
+        var humanPlay = Move.valueOf(humanMove);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.valueOf(gameMove));
         var playEvent = playRoundHandler.handle(gameID, humanPlay);
         var endState = endGameHandler.handle(gameID);

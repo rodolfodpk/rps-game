@@ -1,6 +1,5 @@
 package com.rpsg.controller;
 
-import com.rpsg.model.GameCommand;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
@@ -39,7 +38,7 @@ public class GameController {
     @PostMapping("/startGame")
     public Mono<GameEvent.GameStarted> startGame(@RequestParam("playerName") String playerName) {
         var gameId = UUID.randomUUID().toString();
-        return Mono.fromCallable(() -> startGameHandler.handle(gameId, new GameCommand.StartGame(playerName)))
+        return Mono.fromCallable(() -> startGameHandler.handle(gameId, playerName))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -47,7 +46,7 @@ public class GameController {
     public Mono<ResponseEntity<GameEvent.RoundPlayed>> playRound(@PathVariable String gameId,
                                                                  @RequestParam("playerMove") Move playerMove) {
         return Mono.fromCallable(() -> {
-            var gameState = playRoundHandler.handle(gameId, new GameCommand.PlayRound(playerMove));
+            var gameState = playRoundHandler.handle(gameId, playerMove);
             return new ResponseEntity<>(gameState, HttpStatus.OK);
         }).subscribeOn(Schedulers.boundedElastic());
     }

@@ -1,7 +1,5 @@
 package com.rpsg.model;
 
-import com.rpsg.model.GameCommand.PlayRound;
-import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import org.junit.jupiter.api.Order;
@@ -21,9 +19,9 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
     @Order(1)
     public void startGame() {
         // given
-        var startGame = new StartGame("Player1");
+        var playerName = "Player1";
         // when
-        var startedGameEvent = startGameHandler.handle(gameID, startGame);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName);
         // then
         assertNotNull(gameID);
         assertEquals("Player1", startedGameEvent.player());
@@ -33,7 +31,7 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
     @Order(2)
     public void playRound1() {
         // given
-        var playRound = new PlayRound(Move.ROCK);
+        var playRound = Move.ROCK;
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
         var roundPlayedEvent = playRoundHandler.handle(gameID, playRound);
@@ -47,7 +45,7 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
     @Order(3)
     public void playRound2() {
         // given
-        var playRound = new PlayRound(Move.SCISSORS);
+        var playRound = Move.SCISSORS;
         // when
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
@@ -62,7 +60,7 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
     @Order(4)
     public void playRound3() {
         // given
-        var playRound = new PlayRound(Move.ROCK);
+        var playRound = Move.ROCK;
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
         var latestEvent = playRoundHandler.handle(gameID, playRound);
@@ -75,8 +73,6 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
     @Test
     @Order(5)
     public void endGameWon() {
-        // given
-        var endGame = new GameCommand.EndGame();
         // when
         var newState = endGameHandler.handle(gameID);
         // then state

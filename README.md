@@ -22,7 +22,7 @@
 
 ## Notes
 
-* I focused more on the domain model. I used command, events and state approach. It's fully tested (~100%).
+* The domain model is fully tested (~100%).
 * For the sake of simplicity and time to deliver:
     1. Request and responses are java records from the model package. There no distinction between requests / responses
        from model classes.

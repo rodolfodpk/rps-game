@@ -5,7 +5,7 @@ export let options = {
     stages: [
         {duration: '1m', target: 100}, // ramp up to N users over N minute
         {duration: '1m', target: 1000}, // stay at N users for 5 minutes
-        {duration: '1m', target: 0}, // ramp down to 0 users over 1 minute
+        // {duration: '2m', target: 0}, // ramp down to 0 users over 1 minute
     ],
 };
 

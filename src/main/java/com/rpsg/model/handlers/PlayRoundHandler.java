@@ -1,6 +1,5 @@
 package com.rpsg.model.handlers;
 
-import com.rpsg.model.GameCommand;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameEventRepository;
 import com.rpsg.model.Move;
@@ -18,10 +17,10 @@ public class PlayRoundHandler {
         this.gameMoveDecider = gameMoveDecider;
     }
 
-    public GameEvent.RoundPlayed handle(String gameId, GameCommand.PlayRound command) {
+    public GameEvent.RoundPlayed handle(String gameId, Move playerMove) {
         var gameMove = gameMoveDecider.determineGameMove();
-        var winner = determineWinner(command.playerMove(), gameMove);
-        var newEvent = new GameEvent.RoundPlayed(gameId, command.playerMove(), gameMove, winner);
+        var winner = determineWinner(playerMove, gameMove);
+        var newEvent = new GameEvent.RoundPlayed(gameId, playerMove, gameMove, winner);
         gameEventRepository.appendEvent(gameId, newEvent);
         return newEvent;
     }

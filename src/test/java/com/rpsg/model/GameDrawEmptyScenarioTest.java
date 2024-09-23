@@ -1,6 +1,5 @@
 package com.rpsg.model;
 
-import com.rpsg.model.GameCommand.StartGame;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
@@ -14,19 +13,17 @@ public class GameDrawEmptyScenarioTest extends AbstractScenarioTest {
     @Order(1)
     public void startGame() {
         // given
-        var startGame = new StartGame("Player1");
+        var playerName = "Player1";
         // when
-        var event = startGameHandler.handle(gameID, startGame);
+        var event = startGameHandler.handle(gameID, playerName);
         // then
         assertNotNull(event.gameId());
-        assertEquals(startGame.player(), event.player());
+        assertEquals(playerName, event.player());
     }
 
     @Test
     @Order(2)
     public void endGameWithNoPlaysShouldBeDRAW() {
-        // given
-        var endGame = new GameCommand.EndGame();
         // when
         var newState = endGameHandler.handle(gameID);
         // then state

@@ -1,7 +1,5 @@
 package com.rpsg.model;
 
-import com.rpsg.model.GameCommand.PlayRound;
-import com.rpsg.model.GameCommand.StartGame;
 import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import org.junit.jupiter.api.Order;
@@ -22,22 +20,21 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
     @Order(1)
     public void startGame() {
         // given
-        var startGame = new StartGame("Player1");
+        var playerName = "Player1";
         // when
-        var event = startGameHandler.handle(gameID, startGame);
+        var event = startGameHandler.handle(gameID, playerName);
         // then
         assertNotNull(event.gameId());
-        assertEquals(startGame.player(), event.player());
+        assertEquals(playerName, event.player());
     }
 
     @Test
     @Order(1)
     public void playRound1Rock() {
         // given
-        var playRound = new PlayRound(Move.ROCK);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.ROCK);
         // when
-        var latestEvent = playRoundHandler.handle(gameID, playRound);
+        var latestEvent = playRoundHandler.handle(gameID, Move.ROCK);
         // then event
         assertEquals(Move.ROCK, latestEvent.playerMove());
         assertEquals(Move.ROCK, latestEvent.gameMove());
@@ -48,10 +45,9 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
     @Order(2)
     public void playRound2Paper() {
         // given
-        var playRound = new PlayRound(Move.PAPER);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var latestEvent = playRoundHandler.handle(gameID, playRound);
+        var latestEvent = playRoundHandler.handle(gameID, Move.PAPER);
         // then event
         assertEquals(Move.PAPER, latestEvent.playerMove());
         assertEquals(Move.PAPER, latestEvent.gameMove());
@@ -61,8 +57,6 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
     @Test
     @Order(3)
     public void endGameShouldBeDRAW() {
-        // given
-        var endGame = new GameCommand.EndGame();
         // when
         var newState = endGameHandler.handle(gameID);
         // then state
