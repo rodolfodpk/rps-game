@@ -14,6 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import java.util.Objects;
 
 import static com.rpsg.model.Move.ROCK;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -66,17 +67,13 @@ public class GameControllerTest {
                 .uri("/endGame/" + gameID)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.gameId").isEqualTo(gameID)
-                .jsonPath("$.events").isNotEmpty()
-                .jsonPath("$.events[0]['@type']").isEqualTo(GameEvent.GameStarted.class.getSimpleName())
-                .jsonPath("$.events[0].gameId").isEqualTo(gameID)
-                .jsonPath("$.events[1]['@type']").isEqualTo(GameEvent.RoundPlayed.class.getSimpleName())
-                .jsonPath("$.events[1].gameId").isEqualTo(gameID)
-                .jsonPath("$.events[1].playerMove").isEqualTo(ROCK.name())
-                .jsonPath("$.events[1].gameMove").isNotEmpty()
-                .jsonPath("$.events[1].winner").isNotEmpty()
-                .jsonPath("$.events[2]['@type']").isEqualTo(GameEvent.GameEnded.class.getSimpleName())
-                .jsonPath("$.events[2].gameId").isEqualTo(gameID);
+                .expectBody(GameRepresentation.class)
+                .consumeWith(response -> {
+                    GameRepresentation gameRepresentation = response.getResponseBody();
+                    assertNotNull(gameRepresentation.gameId());
+                    assertNotNull(gameRepresentation.playerId());
+                    assertNotNull(gameRepresentation.winner());
+                    assertNotNull(gameRepresentation.stats());
+                });
     }
 }

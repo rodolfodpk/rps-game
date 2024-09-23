@@ -1,7 +1,6 @@
 package com.rpsg.controller;
 
 import com.rpsg.model.GameEvent;
-import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
 import com.rpsg.model.handlers.EndGameHandler;
 import com.rpsg.model.handlers.PlayRoundHandler;
@@ -25,14 +24,16 @@ public class GameController {
     private final StartGameHandler startGameHandler;
     private final PlayRoundHandler playRoundHandler;
     private final EndGameHandler endGameHandler;
+    private final GameRepresentationMapper mapper;
 
     @Autowired
     public GameController(StartGameHandler startGameHandler,
                           PlayRoundHandler playRoundHandler,
-                          EndGameHandler endGameHandler) {
+                          EndGameHandler endGameHandler, GameRepresentationMapper mapper) {
         this.startGameHandler = startGameHandler;
         this.playRoundHandler = playRoundHandler;
         this.endGameHandler = endGameHandler;
+        this.mapper = mapper;
     }
 
     @PostMapping("/startGame")
@@ -53,10 +54,10 @@ public class GameController {
     }
 
     @PutMapping("/endGame/{gameId}")
-    public Mono<ResponseEntity<GameState>> endGame(@PathVariable String gameId) {
+    public Mono<ResponseEntity<GameRepresentation>> endGame(@PathVariable String gameId) {
         return Mono.fromCallable(() -> {
-                    var gameEnded = endGameHandler.handle(gameId);
-                    return new ResponseEntity<>(gameEnded, HttpStatus.OK);
+                    var gameState = endGameHandler.handle(gameId);
+                    return new ResponseEntity<>(mapper.map(gameState), HttpStatus.OK);
                 })
                 .subscribeOn(Schedulers.boundedElastic());
     }

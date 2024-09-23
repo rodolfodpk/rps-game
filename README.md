@@ -24,9 +24,9 @@
 
 * The code is fully tested (~100%).
 * For the sake of simplicity and time to deliver:
-    * [`GameState`](./src/main/java/com/rpsg/model/GameState.java) is a model class, but also a controller response.
     * [`GameEventRepository`](./src/main/java/com/rpsg/model/GameEventRepository.java)
-        * [`Implementation`](./src/main/java/com/rpsg/repository/GameEventInMemoryRepository.java) is using [`Caffeine`](https://github.com/ben-manes/caffeine) instead of a distributed cache like KeyDb (Redis).
+        * [`Implementation`](./src/main/java/com/rpsg/repository/GameEventInMemoryRepository.java) is
+          using [`Caffeine`](https://github.com/ben-manes/caffeine) instead of a distributed cache like KeyDb (Redis).
         * API is not based on Reactor, even though it's only implementation does not block IO (RAM storage).
         * Just in case, [`GameController`](./src/main/java/com/rpsg/controller/GameController.java) is consuming
           handlers
