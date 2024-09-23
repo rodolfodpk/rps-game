@@ -12,7 +12,7 @@
 2. On browser, open: http://localhost:8080/webjars/swagger-ui/index.html
 3. Then play with the swagger-ui in order to test the game
 
-# Running load test
+## Running load test
 
 * Install https://grafana.com/docs/k6/latest/set-up/install-k6/
 * On terminal, run: ```k6 run k6_script.js```
