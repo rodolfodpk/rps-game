@@ -1,6 +1,5 @@
 package com.rpsg.model;
 
-import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -15,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 public class GameRulesTest extends AbstractScenarioTest {
 
-    private final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
+    private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
     private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
 
     @ParameterizedTest(name = "When human move is {0} and game move is {1} then the winner is {2}")

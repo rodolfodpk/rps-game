@@ -6,6 +6,8 @@ import com.rpsg.model.Move;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 @Component
 public class PlayRoundHandler {
 
@@ -36,4 +38,14 @@ public class PlayRoundHandler {
         };
     }
 
+    @Component
+    public static class GameMoveDecider {
+
+        private final Random random = new Random();
+
+        public Move determineGameMove() {
+            return Move.values()[random.nextInt(Move.values().length)];
+        }
+
+    }
 }

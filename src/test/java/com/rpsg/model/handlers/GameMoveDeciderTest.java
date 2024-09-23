@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameMoveDeciderTest {
 
-    private final GameMoveDecider gameMoveDecider = new GameMoveDecider();
+    private final PlayRoundHandler.GameMoveDecider gameMoveDecider = new PlayRoundHandler.GameMoveDecider();
 
     @Test
     void determineGameMove_ReturnsRock() {

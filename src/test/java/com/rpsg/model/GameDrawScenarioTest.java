@@ -1,6 +1,5 @@
 package com.rpsg.model;
 
-import com.rpsg.model.handlers.GameMoveDecider;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 public class GameDrawScenarioTest extends AbstractScenarioTest {
 
-    private final GameMoveDecider gameMoveDecider = mock(GameMoveDecider.class);
+    private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
     private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
 
     @Test
