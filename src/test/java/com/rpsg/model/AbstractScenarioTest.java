@@ -2,7 +2,7 @@ package com.rpsg.model;
 
 import com.rpsg.model.handlers.EndGameHandler;
 import com.rpsg.model.handlers.StartGameHandler;
-import com.rpsg.repository.GameEventInMemoryRepository;
+import com.rpsg.repository.GameEventCaffeineRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AbstractScenarioTest {
 
-    protected final GameEventRepository gameEventRepository = new GameEventInMemoryRepository();
+    protected final GameEventRepository gameEventRepository = new GameEventCaffeineRepository();
     protected final StartGameHandler startGameHandler = new StartGameHandler(gameEventRepository);
     protected final EndGameHandler endGameHandler = new EndGameHandler(gameEventRepository);
     protected final String gameID = "testGame1";

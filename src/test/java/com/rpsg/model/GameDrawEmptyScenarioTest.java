@@ -23,7 +23,7 @@ public class GameDrawEmptyScenarioTest extends AbstractScenarioTest {
 
     @Test
     @Order(2)
-    public void endGameWithNoPlaysShouldBeDRAW() {
+    public void endGameWithNoPlaysShouldBeDraw() {
         // when
         var newState = endGameHandler.handle(gameID);
         // then state

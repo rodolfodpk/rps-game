@@ -8,9 +8,11 @@ import org.pcollections.TreePVector;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
-public class GameEventInMemoryRepository implements com.rpsg.model.GameEventRepository {
+public class GameEventCaffeineRepository implements com.rpsg.model.GameEventRepository {
 
     private final LoadingCache<String, PVector<GameEvent>> cache = Caffeine.newBuilder()
 //            .maximumSize(500_000)
@@ -22,15 +24,14 @@ public class GameEventInMemoryRepository implements com.rpsg.model.GameEventRepo
     }
 
     @Override
-    public PVector<GameEvent> appendEvent(String gameId, GameEvent gameEvent) {
-        PVector<GameEvent> events = cache.get(gameId);
-        events = events.plus(gameEvent);
-        cache.put(gameId, events);
-        return events;
+    public List<GameEvent> appendEvent(String gameId, GameEvent gameEvent) {
+        var newEvents = cache.get(gameId).plus(gameEvent);
+        cache.put(gameId, newEvents);
+        return Collections.unmodifiableList(newEvents);
     }
 
     @Override
-    public PVector<GameEvent> findAll(String gameId) {
+    public List<GameEvent> findAll(String gameId) {
         return cache.get(gameId);
     }
 }

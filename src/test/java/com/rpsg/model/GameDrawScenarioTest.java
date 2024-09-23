@@ -55,7 +55,7 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
 
     @Test
     @Order(3)
-    public void endGameShouldBeDRAW() {
+    public void endGameShouldBeDraw() {
         // when
         var newState = endGameHandler.handle(gameID);
         // then state

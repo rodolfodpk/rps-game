@@ -1,5 +1,7 @@
 package com.rpsg.model.handlers;
 
+//import com.rpsg.controller.GameStats;
+
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameEventRepository;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ public class StartGameHandler {
     private final GameEventRepository gameEventRepository;
 
     public StartGameHandler(GameEventRepository gameEventRepository) {
+//        var x = new GameStats(null, null);
         this.gameEventRepository = gameEventRepository;
     }
 
