@@ -1,10 +1,12 @@
 package com.rpsg.model;
 
-import org.eclipse.collections.api.list.ImmutableList;
+import org.pcollections.PVector;
+
+import java.util.List;
 
 public interface GameEventRepository {
 
-    void appendEvent(String gameId, GameEvent gameEvent);
+    PVector<GameEvent> appendEvent(String gameId, GameEvent gameEvent);
 
-    ImmutableList<GameEvent> findAll(String gameId);
+    List<GameEvent> findAll(String gameId);
 }

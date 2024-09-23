@@ -22,11 +22,16 @@
 
 ## Notes
 
-* The domain model is fully tested (~100%).
+* The code is fully tested (~100%).
 * For the sake of simplicity and time to deliver:
-    1. GameState is a model class, but also a controller response.
-    2. I decided to use a simplistic and possible naive GameEventRepository implementation. Using MultiMap from Eclipse
-       Collections instead of a distributed cache like KeyDb (since Redis is not OSS anymore)
-    3. It's far from production ready.
+    * [`GameState`](./src/main/java/com/rpsg/model/GameState.java) is a model class, but also a controller response.
+    * [`GameEventRepository`](./src/main/java/com/rpsg/model/GameEventRepository.java)
+        * Implementation is using https://github.com/ben-manes/caffeine instead of a distributed cache like KeyDb (
+          Redis).
+        * API is not based on Reactor, even though it's only implementation does not block IO (RAM storage).
+        * Just in case, [`GameController`](./src/main/java/com/rpsg/controller/GameController.java) is consuming
+          handlers
+          as a blocking API. Just in order to enable me try other repository implementation.
+    * It's far from production ready: errors, distributed store, circuit breakers, observability, etc
 
 Thanks!
