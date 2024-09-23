@@ -1,9 +1,5 @@
 # Rock, paper and scissors game
 
-## Status
-
-* Work in progress
-
 ## Requirements
 
 * Java 21
