@@ -27,8 +27,6 @@ public class GameController {
     private final PlayRoundHandler playRoundHandler;
     private final EndGameHandler endGameHandler;
 
-    private final GameCommand.EndGame endGameCommand = new GameCommand.EndGame();
-
     @Autowired
     public GameController(StartGameHandler startGameHandler,
                           PlayRoundHandler playRoundHandler,
@@ -48,13 +46,17 @@ public class GameController {
     @PutMapping("/playRound/{gameId}")
     public Mono<ResponseEntity<GameEvent.RoundPlayed>> playRound(@PathVariable String gameId,
                                                                  @RequestParam("playerMove") Move playerMove) {
-        var gameState = playRoundHandler.handle(gameId, new GameCommand.PlayRound(playerMove));
-        return Mono.just(new ResponseEntity<>(gameState, HttpStatus.OK));
+        return Mono.fromCallable(() -> {
+            var gameState = playRoundHandler.handle(gameId, new GameCommand.PlayRound(playerMove));
+            return new ResponseEntity<>(gameState, HttpStatus.OK);
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @PutMapping("/endGame/{gameId}")
     public Mono<ResponseEntity<GameState>> endGame(@PathVariable String gameId) {
-        var gameState = endGameHandler.handle(gameId);
-        return Mono.just(new ResponseEntity<>(gameState, HttpStatus.OK));
+        return Mono.fromCallable(() -> {
+            var gameState = endGameHandler.handle(gameId);
+            return new ResponseEntity<>(gameState, HttpStatus.OK);
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
