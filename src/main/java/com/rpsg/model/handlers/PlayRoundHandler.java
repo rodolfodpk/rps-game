@@ -24,10 +24,11 @@ public class PlayRoundHandler {
     }
 
     public GameEvent.RoundPlayed handle(String gameId, Move playerMove) {
-        if (gameStatusRepository.getStatus(gameId) == null) {
+        var status = gameStatusRepository.getStatus(gameId);
+        if (status == null) {
             throw new IllegalArgumentException("Game not found");
         }
-        if (gameStatusRepository.getStatus(gameId) == GameStatus.ENDED) {
+        if (status == GameStatus.ENDED) {
             throw new IllegalStateException("Game is already ended");
         }
         var gameMove = gameMoveDecider.determineGameMove();
