@@ -56,9 +56,9 @@ public class EndGameController {
         public GameRepresentation map(GameState gameState) {
             var gameId = gameState.gameId();
             var gameEvents = gameState.events();
-            String playerId = ((GameEvent.GameStarted) gameEvents.getFirst()).player();
-            Winner winner = ((GameEvent.GameEnded) gameEvents.getLast()).winner();
-            GameStats stats = new GameStats(moves(gameEvents), winners(gameEvents));
+            var playerId = ((GameEvent.GameStarted) gameEvents.getFirst()).player();
+            var winner = ((GameEvent.GameEnded) gameEvents.getLast()).winner();
+            var stats = new GameStats(moves(gameEvents), winners(gameEvents));
             return new GameRepresentation(gameId, playerId, winner, stats);
         }
 
