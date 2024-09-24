@@ -66,7 +66,7 @@ default ✓ [======================================] 0000/1000 VUs  2m15s
 
 ## Notes
 
-* The code is fully tested (~100%).
+* The code is fully tested: near 100% of code coverage.
 * It has
   an [`ArchUnit`](https://www.archunit.org/use-cases) [`ArchUnitTest`](./src/test/java/com/rpsg/ArchUnitTest.java) to
   assert basic architecture
