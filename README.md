@@ -70,7 +70,8 @@ default ✓ [======================================] 0000/1000 VUs  2m15s
 * It has
   an [`ArchUnit`](https://www.archunit.org/use-cases) [`ArchUnitTest`](./src/test/java/com/rpsg/ArchUnitTest.java) to
   assert basic architecture
-* It has an [`GameE2ETest`](./src/test/java/com/rpsg/GameE2ETest.java) to assert basic API features
+* It has a [`GameE2ETest`](./src/test/java/com/rpsg/GameE2ETest.java) to assert basic API features
+* It has a [`K6`](https://k6.io/) [`Load test`](./k6_script.js)
 * For the sake of simplicity and time to deliver:
     * [`GameEventRepository`](./src/main/java/com/rpsg/model/GameEventRepository.java)
         * [`Implementation`](./src/main/java/com/rpsg/repository/GameEventCaffeineRepository.java) is
