@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GameStatusesTest extends AbstractScenarioTest {
+public class GameLifecycleTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
     private final PlayRoundHandler playRoundHandler =
