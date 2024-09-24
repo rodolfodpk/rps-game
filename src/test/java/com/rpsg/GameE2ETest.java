@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.UUID;
+
 import static com.rpsg.model.Move.ROCK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +28,7 @@ public class GameE2ETest {
     private WebTestClient webTestClient;
 
     private String gameID;
+    private static final String invalidGameId = UUID.randomUUID().toString();
 
     @Test
     @Order(1)
@@ -95,7 +98,7 @@ public class GameE2ETest {
                 .uri(uriBuilder -> uriBuilder
                         .path("/games/{gameID}/plays")
                         .queryParam("playerMove", ROCK)
-                        .build("GAME_NOT_RECORDED"))
+                        .build(invalidGameId))
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -107,7 +110,7 @@ public class GameE2ETest {
                 .put()
                 .uri(uriBuilder -> uriBuilder
                         .path("/games/{gameID}/endings")
-                        .build("GAME_NOT_RECORDED"))
+                        .build(invalidGameId))
                 .exchange()
                 .expectStatus().isNotFound();
     }
