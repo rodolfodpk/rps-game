@@ -11,9 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.Objects;
-
 import static com.rpsg.model.Move.ROCK;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,16 +29,24 @@ public class GameControllerTest {
     @Test
     @Order(1)
     public void startGame() {
-        webTestClient
+        var reponse = webTestClient
                 .post()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/startGame")
+                        .path("/games")
                         .queryParam("playerName", "John")
                         .build(gameID))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(GameEvent.GameStarted.class)
-                .consumeWith(response -> this.gameID = Objects.requireNonNull(response.getResponseBody()).gameId());
+                .expectBody(GameEvent.GameStarted.class);
+
+        var gameStarted = reponse.returnResult().getResponseBody();
+
+        assertNotNull(gameStarted);
+        this.gameID = gameStarted.gameId();
+        assertNotNull(gameID);
+
+        assertEquals("John", gameStarted.player());
+
     }
 
     @Test
@@ -48,7 +55,7 @@ public class GameControllerTest {
         webTestClient
                 .put()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/playRound/{gameID}")
+                        .path("/games/{gameID}/plays")
                         .queryParam("playerMove", ROCK)
                         .build(gameID))
                 .exchange()
@@ -64,12 +71,14 @@ public class GameControllerTest {
     public void endGame() {
         webTestClient
                 .put()
-                .uri("/endGame/" + gameID)
+                .uri(uriBuilder -> uriBuilder
+                        .path("/games/{gameID}/endings")
+                        .build(gameID))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(GameRepresentation.class)
+                .expectBody(EndGameController.GameRepresentation.class)
                 .consumeWith(response -> {
-                    GameRepresentation gameRepresentation = response.getResponseBody();
+                    EndGameController.GameRepresentation gameRepresentation = response.getResponseBody();
                     assertNotNull(gameRepresentation.gameId());
                     assertNotNull(gameRepresentation.playerId());
                     assertNotNull(gameRepresentation.winner());

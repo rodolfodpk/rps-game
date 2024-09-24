@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameRepresentationMapperTest {
 
-    private final GameRepresentationMapper gameRepresentationMapper = new GameRepresentationMapper();
+    private final EndGameController.GameRepresentationMapper gameRepresentationMapper = new EndGameController.GameRepresentationMapper();
 
     @Test
     public void shouldMapToRepresentation() {
@@ -27,7 +27,7 @@ public class GameRepresentationMapperTest {
         GameState gameState = new GameState(gameId, gameEvents);
 
         // When
-        GameRepresentation gameRepresentation = gameRepresentationMapper.map(gameState);
+        EndGameController.GameRepresentation gameRepresentation = gameRepresentationMapper.map(gameState);
 
         // Then
         assertNotNull(gameRepresentation);

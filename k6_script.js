@@ -11,16 +11,16 @@ export let options = {
     ],
 };
 
-const BASE_URL = 'http://localhost:8080'; // Replace with your application URL
+const BASE_URL = 'http://localhost:8080/games'; // Replace with your application URL
 
 export default function () {
     let playerName = `Player${Math.floor(Math.random() * 10000)}`;
 
     // Start a game
-    let startGameRes = http.post(`${BASE_URL}/startGame?playerName=${playerName}`);
+    let startGameRes = http.post(`${BASE_URL}?playerName=${playerName}`);
     check(startGameRes, {'Game started successfully': (resp) => resp.status === 200});
-
-    let gameId = startGameRes.toString();
+    let json = JSON.parse(startGameRes.body);
+    let gameId = json.gameId;
 
     // sleep(1);
 
@@ -28,13 +28,13 @@ export default function () {
     let playerMove = moves[Math.floor(Math.random() * moves.length)];  // Randomizes move between 'ROCK', 'PAPER', 'SCISSORS'
 
     // Play a round
-    let playRoundRes = http.put(`${BASE_URL}/playRound/${gameId}?playerMove=${playerMove}`);
+    let playRoundRes = http.put(`${BASE_URL}/${gameId}/plays?playerMove=${playerMove}`);
     check(playRoundRes, {'Move made successfully': (resp) => resp.status === 200});
 
     // sleep(1);
 
     // End the game
-    let endGameRes = http.put(`${BASE_URL}/endGame/${gameId}`);
+    let endGameRes = http.put(`${BASE_URL}/${gameId}/endings`);
     check(endGameRes, {'Game ended successfully': (resp) => resp.status === 200});
 
     // sleep(1);
