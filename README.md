@@ -78,7 +78,7 @@ default ✓ [======================================] 0000/1000 VUs  2m15s
           using [`Caffeine`](https://github.com/ben-manes/caffeine) instead of a distributed cache
           like [`KeyDb`](https://docs.keydb.dev/).
         * API is not based on Reactor, even though it's only implementation does not block IO (RAM storage).
-        * Just in case, [`GameControllers`](./src/main/java/com/rpsg/controller) is consuming
+        * Just in case, [`GameControllers`](./src/main/java/com/rpsg/controller) are consuming
           handlers
           as a blocking API. Just in order to enable me try other repository implementation.
     * It's far from production ready: errors, distributed store, persistence, circuit breakers, observability, etc
