@@ -53,7 +53,6 @@ public class EndGameController {
     public static class GameRepresentationMapper {
 
         public GameRepresentation map(GameState gameState) {
-            System.out.println(gameState);
             var gameId = gameState.gameId();
             var gameEvents = gameState.events();
             String playerId = ((GameEvent.GameStarted) gameEvents.getFirst()).player();

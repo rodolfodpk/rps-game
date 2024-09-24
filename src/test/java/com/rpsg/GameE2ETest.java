@@ -1,5 +1,6 @@
-package com.rpsg.controller;
+package com.rpsg;
 
+import com.rpsg.controller.EndGameController;
 import com.rpsg.model.GameEvent;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GameControllerTest {
+public class GameE2ETest {
 
     @Autowired
     private WebTestClient webTestClient;

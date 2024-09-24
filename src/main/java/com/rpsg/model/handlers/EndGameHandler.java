@@ -3,6 +3,8 @@ package com.rpsg.model.handlers;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameEventRepository;
 import com.rpsg.model.GameState;
+import com.rpsg.model.GameStatus;
+import com.rpsg.model.GameStatusRepository;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
 
@@ -15,16 +17,22 @@ import java.util.stream.Collectors;
 public class EndGameHandler {
 
     private final GameEventRepository gameEventRepository;
+    private final GameStatusRepository gameStatusRepository;
 
-    public EndGameHandler(GameEventRepository gameEventRepository) {
+    public EndGameHandler(GameEventRepository gameEventRepository, GameStatusRepository gameStatusRepository) {
         this.gameEventRepository = gameEventRepository;
+        this.gameStatusRepository = gameStatusRepository;
     }
 
     public GameState handle(String gameId) {
         var currentEvents = gameEventRepository.findAll(gameId);
+        if (currentEvents.getLast() instanceof GameEvent.GameEnded) {
+            throw new IllegalStateException("Game is already ended");
+        }
         var winner = determineWinner(currentEvents);
         var newEvent = new GameEvent.GameEnded(gameId, winner);
         var newEvents = gameEventRepository.appendEvent(gameId, newEvent);
+        gameStatusRepository.setStatus(gameId, GameStatus.ENDED);
         return new GameState(newEvent.gameId(), newEvents);
     }
 

@@ -20,9 +20,8 @@
 ## Notes
 
 * The code is fully tested (~100%).
-* It has
-  an [`ArchUnit`](https://www.archunit.org/use-cases) [`ArchUnitTest`](./src/test/java/com/rpsg/ArchUnitTest.java)
-  to assert basic architecture
+* It has an [`ArchUnit`](https://www.archunit.org/use-cases) [`ArchUnitTest`](./src/test/java/com/rpsg/ArchUnitTest.java) to assert basic architecture
+* It has an [`GameE2ETest`](./src/test/java/com/rpsg/GameE2ETest.java) to assert basic API features
 * For the sake of simplicity and time to deliver:
     * [`GameEventRepository`](./src/main/java/com/rpsg/model/GameEventRepository.java)
         * [`Implementation`](./src/main/java/com/rpsg/repository/GameEventCaffeineRepository.java) is

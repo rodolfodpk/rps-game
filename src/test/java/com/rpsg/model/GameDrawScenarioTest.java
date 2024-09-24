@@ -13,7 +13,8 @@ import static org.mockito.Mockito.when;
 public class GameDrawScenarioTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
-    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
+    private final PlayRoundHandler playRoundHandler =
+            new PlayRoundHandler(gameEventRepository, gameMoveDecider, gameStatusRepository);
 
     @Test
     @Order(1)

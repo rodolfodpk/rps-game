@@ -15,7 +15,8 @@ import static org.mockito.Mockito.when;
 public class GameRulesTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
-    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameEventRepository, gameMoveDecider);
+    private final PlayRoundHandler playRoundHandler =
+            new PlayRoundHandler(gameEventRepository, gameMoveDecider, gameStatusRepository);
 
     @ParameterizedTest(name = "When human move is {0} and game move is {1} then the winner is {2}")
     @CsvSource({
