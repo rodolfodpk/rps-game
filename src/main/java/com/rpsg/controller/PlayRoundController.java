@@ -25,10 +25,11 @@ public class PlayRoundController {
     @PutMapping("/{gameId}/plays")
     public Mono<ResponseEntity<GameEvent.RoundPlayed>> playRound(@PathVariable String gameId,
                                                                  @RequestParam("playerMove") Move playerMove) {
-        return Mono.fromCallable(() -> {
-                    var roundPlayed = playRoundHandler.handle(gameId, playerMove);
-                    return new ResponseEntity<>(roundPlayed, HttpStatus.OK);
-                })
+        return Mono.fromCallable(() -> playRoundHandler.handle(gameId, playerMove))
+                .map(roundPlayed -> new ResponseEntity<>(roundPlayed, HttpStatus.CREATED))
+                .onErrorResume(IllegalArgumentException.class, e -> Mono.just(ResponseEntity.notFound().build()))
+                .onErrorResume(IllegalStateException.class, e -> Mono.just(ResponseEntity.badRequest().build()))
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

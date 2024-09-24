@@ -26,6 +26,9 @@ public class EndGameHandler {
 
     public GameState handle(String gameId) {
         var currentEvents = gameEventRepository.findAll(gameId);
+        if (currentEvents.isEmpty()) {
+            throw new IllegalArgumentException("Game not found");
+        }
         if (currentEvents.getLast() instanceof GameEvent.GameEnded) {
             throw new IllegalStateException("Game is already ended");
         }

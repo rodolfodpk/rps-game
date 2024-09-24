@@ -35,10 +35,11 @@ public class EndGameController {
 
     @PutMapping("/{gameId}/endings")
     public Mono<ResponseEntity<GameRepresentation>> endGame(@PathVariable String gameId) {
-        return Mono.fromCallable(() -> {
-                    var gameState = endGameHandler.handle(gameId);
-                    return new ResponseEntity<>(mapper.map(gameState), HttpStatus.OK);
-                })
+        return Mono.fromCallable(() -> endGameHandler.handle(gameId))
+                .map(gameState -> new ResponseEntity<>(mapper.map(gameState), HttpStatus.CREATED))
+                .onErrorResume(IllegalArgumentException.class, e -> Mono.just(ResponseEntity.notFound().build()))
+                .onErrorResume(IllegalStateException.class, e -> Mono.just(ResponseEntity.badRequest().build()))
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 

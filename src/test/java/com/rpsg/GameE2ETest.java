@@ -37,7 +37,7 @@ public class GameE2ETest {
                         .queryParam("playerName", "John")
                         .build(gameID))
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isCreated()
                 .expectBody(GameEvent.GameStarted.class);
 
         var gameStarted = reponse.returnResult().getResponseBody();
@@ -60,7 +60,7 @@ public class GameE2ETest {
                         .queryParam("playerMove", ROCK)
                         .build(gameID))
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isCreated()
                 .expectBody()
                 .jsonPath("$.gameId").isEqualTo(gameID)
                 .jsonPath("$.['@type']").isEqualTo(GameEvent.RoundPlayed.class.getSimpleName())
@@ -76,7 +76,7 @@ public class GameE2ETest {
                         .path("/games/{gameID}/endings")
                         .build(gameID))
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isCreated()
                 .expectBody(EndGameController.GameRepresentation.class)
                 .consumeWith(response -> {
                     EndGameController.GameRepresentation gameRepresentation = response.getResponseBody();
@@ -85,5 +85,30 @@ public class GameE2ETest {
                     assertNotNull(gameRepresentation.winner());
                     assertNotNull(gameRepresentation.stats());
                 });
+    }
+
+    @Test
+    @Order(4)
+    public void playRoundGameNotFound() {
+        webTestClient
+                .put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/games/{gameID}/plays")
+                        .queryParam("playerMove", ROCK)
+                        .build("GAME_NOT_RECORDED"))
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @Order(5)
+    public void endGameNotFound() {
+        webTestClient
+                .put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/games/{gameID}/endings")
+                        .build("GAME_NOT_RECORDED"))
+                .exchange()
+                .expectStatus().isNotFound();
     }
 }

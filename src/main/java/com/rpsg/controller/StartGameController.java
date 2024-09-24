@@ -2,6 +2,8 @@ package com.rpsg.controller;
 
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.handlers.StartGameHandler;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,9 +23,12 @@ public class StartGameController {
     }
 
     @PostMapping()
-    public Mono<GameEvent.GameStarted> startGame(@RequestParam("playerName") String playerName) {
+    public Mono<ResponseEntity<GameEvent.GameStarted>> startGame(@RequestParam("playerName") String playerName) {
         var gameId = UUID.randomUUID().toString();
         return Mono.fromCallable(() -> startGameHandler.handle(gameId, playerName))
+                .map(gameStarted -> new ResponseEntity<>(gameStarted, HttpStatus.CREATED))
+                .onErrorResume(IllegalStateException.class, e -> Mono.just(ResponseEntity.badRequest().build()))
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

@@ -18,7 +18,7 @@ export default function () {
 
     // Start a game
     let startGameRes = http.post(`${BASE_URL}?playerName=${playerName}`);
-    check(startGameRes, {'Game started successfully': (resp) => resp.status === 200});
+    check(startGameRes, {'Game started successfully': (resp) => resp.status === 201});
     let json = JSON.parse(startGameRes.body);
     let gameId = json.gameId;
 
@@ -29,13 +29,13 @@ export default function () {
 
     // Play a round
     let playRoundRes = http.put(`${BASE_URL}/${gameId}/plays?playerMove=${playerMove}`);
-    check(playRoundRes, {'Move made successfully': (resp) => resp.status === 200});
+    check(playRoundRes, {'Move made successfully': (resp) => resp.status === 201});
 
     // sleep(1);
 
     // End the game
     let endGameRes = http.put(`${BASE_URL}/${gameId}/endings`);
-    check(endGameRes, {'Game ended successfully': (resp) => resp.status === 200});
+    check(endGameRes, {'Game ended successfully': (resp) => resp.status === 201});
 
     // sleep(1);
 }
