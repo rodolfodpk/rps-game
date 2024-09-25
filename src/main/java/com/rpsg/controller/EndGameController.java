@@ -19,11 +19,9 @@ import reactor.core.scheduler.Schedulers;
 public class EndGameController {
 
     private final IMap<String, GameState> gameStateMap;
-    private final EndGameProcessor.GameRepresentationMapper mapper;
 
     public EndGameController(IMap<String, GameState> gameStateMap, EndGameProcessor.GameRepresentationMapper mapper) {
         this.gameStateMap = gameStateMap;
-        this.mapper = mapper;
     }
 
     @PutMapping("/{gameId}/endings")
