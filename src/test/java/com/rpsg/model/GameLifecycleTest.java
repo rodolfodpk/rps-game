@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import static com.rpsg.model.GameStatus.ENDED;
 import static com.rpsg.model.GameStatus.STARTED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -15,8 +14,7 @@ import static org.mockito.Mockito.when;
 public class GameLifecycleTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
-    private final PlayRoundHandler playRoundHandler =
-            new PlayRoundHandler(gameEventRepository, gameMoveDecider, gameStatusRepository);
+    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameMoveDecider);
 
     @Test
     @Order(1)
@@ -24,11 +22,11 @@ public class GameLifecycleTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var startedGameEvent = startGameHandler.handle(gameID, playerName);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName, null);
+        events.add(startedGameEvent);
         // then
-        assertNotNull(gameID);
+        assertEquals(gameID, startedGameEvent.gameId());
         assertEquals("Player1", startedGameEvent.player());
-        assertEquals(STARTED, gameStatusRepository.getStatus(gameID));
     }
 
     @Test
@@ -37,7 +35,7 @@ public class GameLifecycleTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var exception = assertThrows(IllegalStateException.class, () -> startGameHandler.handle(gameID, playerName));
+        var exception = assertThrows(IllegalStateException.class, () -> startGameHandler.handle(gameID, playerName, STARTED));
         // then
         assertEquals("Game is already started or ended", exception.getMessage());
     }
@@ -49,7 +47,8 @@ public class GameLifecycleTest extends AbstractScenarioTest {
         var playRound = Move.ROCK;
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound);
+        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound, GameStatus.STARTED);
+        events.add(roundPlayedEvent);
         // then event
         assertEquals(Move.ROCK, roundPlayedEvent.playerMove());
         assertEquals(Move.PAPER, roundPlayedEvent.gameMove());
@@ -60,20 +59,22 @@ public class GameLifecycleTest extends AbstractScenarioTest {
     @Order(4)
     public void endGame() {
         // when
-        var newState = endGameHandler.handle(gameID);
+        var state = new GameState(gameID, events);
+        var newState = endGameHandler.handle(state);
         // then state
         assertEquals(3, newState.events().size());
         // then last event
         var latestEvent = (GameEvent.GameEnded) newState.events().getLast();
         assertEquals(Winner.GAME, latestEvent.winner());
-        assertEquals(ENDED, gameStatusRepository.getStatus(gameID));
+//        assertEquals(ENDED, newState.);
     }
 
     @Test
     @Order(5)
     public void endGameAgainMustFail() {
         // when
-        var exception = assertThrows(IllegalStateException.class, () -> endGameHandler.handle(gameID));
+        var state = new GameState(gameID, events);
+        var exception = assertThrows(IllegalStateException.class, () -> endGameHandler.handle(state));
         // then
         assertEquals("Game is already ended", exception.getMessage());
     }
@@ -86,7 +87,7 @@ public class GameLifecycleTest extends AbstractScenarioTest {
         // when
         var exception = assertThrows(IllegalStateException.class, () -> {
             when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
-            playRoundHandler.handle(gameID, playRound);
+            playRoundHandler.handle(gameID, playRound, ENDED);
 
         });
         // then

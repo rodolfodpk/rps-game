@@ -13,8 +13,7 @@ import static org.mockito.Mockito.when;
 public class GameDrawScenarioTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
-    private final PlayRoundHandler playRoundHandler =
-            new PlayRoundHandler(gameEventRepository, gameMoveDecider, gameStatusRepository);
+    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameMoveDecider);
 
     @Test
     @Order(1)
@@ -22,10 +21,11 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var event = startGameHandler.handle(gameID, playerName);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName, null);
+        events.add(startedGameEvent);
         // then
-        assertNotNull(event.gameId());
-        assertEquals(playerName, event.player());
+        assertNotNull(startedGameEvent.gameId());
+        assertEquals(playerName, startedGameEvent.player());
     }
 
     @Test
@@ -34,7 +34,8 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
         // given
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.ROCK);
         // when
-        var latestEvent = playRoundHandler.handle(gameID, Move.ROCK);
+        var latestEvent = playRoundHandler.handle(gameID, Move.ROCK, GameStatus.STARTED);
+        events.add(latestEvent);
         // then event
         assertEquals(Move.ROCK, latestEvent.playerMove());
         assertEquals(Move.ROCK, latestEvent.gameMove());
@@ -47,7 +48,8 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
         // given
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var latestEvent = playRoundHandler.handle(gameID, Move.PAPER);
+        var latestEvent = playRoundHandler.handle(gameID, Move.PAPER, GameStatus.STARTED);
+        events.add(latestEvent);
         // then event
         assertEquals(Move.PAPER, latestEvent.playerMove());
         assertEquals(Move.PAPER, latestEvent.gameMove());
@@ -58,7 +60,8 @@ public class GameDrawScenarioTest extends AbstractScenarioTest {
     @Order(3)
     public void endGameShouldBeDraw() {
         // when
-        var newState = endGameHandler.handle(gameID);
+        var state = new GameState(gameID, events);
+        var newState = endGameHandler.handle(state);
         // then state
         assertEquals(4, newState.events().size());
         assertNotNull(newState.gameId());

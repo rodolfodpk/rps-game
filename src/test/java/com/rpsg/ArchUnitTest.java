@@ -20,7 +20,7 @@ public class ArchUnitTest {
                 .layer("Models").definedBy("com.rpsg.model..")
                 .layer("Repositories").definedBy("com.rpsg.repository..")
                 .whereLayer("Controllers").mayNotBeAccessedByAnyLayer()
-                .whereLayer("Repositories").mayNotBeAccessedByAnyLayer()
+                .whereLayer("Repositories").mayOnlyBeAccessedByLayers("Controllers")
                 .whereLayer("Models").mayOnlyBeAccessedByLayers("Controllers", "Repositories");
 
         architecture.check(importedClasses);

@@ -12,8 +12,7 @@ import static org.mockito.Mockito.when;
 public class GameBasicScenarioTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
-    private final PlayRoundHandler playRoundHandler =
-            new PlayRoundHandler(gameEventRepository, gameMoveDecider, gameStatusRepository);
+    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameMoveDecider);
 
     @Test
     @Order(1)
@@ -21,7 +20,8 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var startedGameEvent = startGameHandler.handle(gameID, playerName);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName, null);
+        events.add(startedGameEvent);
         // then
         assertNotNull(gameID);
         assertEquals("Player1", startedGameEvent.player());
@@ -34,7 +34,8 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
         var playRound = Move.ROCK;
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound);
+        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound, GameStatus.STARTED);
+        events.add(roundPlayedEvent);
         // then event
         assertEquals(Move.ROCK, roundPlayedEvent.playerMove());
         assertEquals(Move.PAPER, roundPlayedEvent.gameMove());
@@ -49,7 +50,8 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
         // when
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound);
+        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound, GameStatus.STARTED);
+        events.add(roundPlayedEvent);
         // then event
         assertEquals(Move.SCISSORS, roundPlayedEvent.playerMove());
         assertEquals(Move.PAPER, roundPlayedEvent.gameMove());
@@ -63,18 +65,20 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
         var playRound = Move.ROCK;
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.PAPER);
         // when
-        var latestEvent = playRoundHandler.handle(gameID, playRound);
+        var roundPlayedEvent = playRoundHandler.handle(gameID, playRound, GameStatus.STARTED);
+        events.add(roundPlayedEvent);
         // then event
-        assertEquals(Move.ROCK, latestEvent.playerMove());
-        assertEquals(Move.PAPER, latestEvent.gameMove());
-        assertEquals(Winner.GAME, latestEvent.winner());
+        assertEquals(Move.ROCK, roundPlayedEvent.playerMove());
+        assertEquals(Move.PAPER, roundPlayedEvent.gameMove());
+        assertEquals(Winner.GAME, roundPlayedEvent.winner());
     }
 
     @Test
     @Order(5)
     public void endGameWon() {
         // when
-        var newState = endGameHandler.handle(gameID);
+        var state = new GameState(gameID, events);
+        var newState = endGameHandler.handle(state);
         // then state
         assertEquals(5, newState.events().size());
         // then last event

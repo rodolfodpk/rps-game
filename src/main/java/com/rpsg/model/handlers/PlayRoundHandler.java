@@ -1,9 +1,7 @@
 package com.rpsg.model.handlers;
 
 import com.rpsg.model.GameEvent;
-import com.rpsg.model.GameEventRepository;
 import com.rpsg.model.GameStatus;
-import com.rpsg.model.GameStatusRepository;
 import com.rpsg.model.Move;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
@@ -13,29 +11,19 @@ import java.util.Random;
 @Component
 public class PlayRoundHandler {
 
-    private final GameEventRepository gameEventRepository;
     private final GameMoveDecider gameMoveDecider;
-    private final GameStatusRepository gameStatusRepository;
 
-    public PlayRoundHandler(GameEventRepository gameEventRepository, GameMoveDecider gameMoveDecider, GameStatusRepository gameStatusRepository) {
-        this.gameEventRepository = gameEventRepository;
+    public PlayRoundHandler(GameMoveDecider gameMoveDecider) {
         this.gameMoveDecider = gameMoveDecider;
-        this.gameStatusRepository = gameStatusRepository;
     }
 
-    public GameEvent.RoundPlayed handle(String gameId, Move playerMove) {
-        var status = gameStatusRepository.getStatus(gameId);
-        if (status == null) {
-            throw new IllegalArgumentException("Game not found");
-        }
-        if (status == GameStatus.ENDED) {
+    public GameEvent.RoundPlayed handle(String gameId, Move playerMove, GameStatus gameStatus) {
+        if (gameStatus == GameStatus.ENDED) {
             throw new IllegalStateException("Game is already ended");
         }
         var gameMove = gameMoveDecider.determineGameMove();
         var winner = determineWinner(playerMove, gameMove);
-        var newEvent = new GameEvent.RoundPlayed(gameId, playerMove, gameMove, winner);
-        gameEventRepository.appendEvent(gameId, newEvent);
-        return newEvent;
+        return new GameEvent.RoundPlayed(gameId, playerMove, gameMove, winner);
     }
 
     private Winner determineWinner(Move humanMove, Move gameMove) {

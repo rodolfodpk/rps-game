@@ -15,17 +15,19 @@ public class GameDrawEmptyScenarioTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var event = startGameHandler.handle(gameID, playerName);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName, null);
+        events.add(startedGameEvent);
         // then
-        assertNotNull(event.gameId());
-        assertEquals(playerName, event.player());
+        assertNotNull(startedGameEvent.gameId());
+        assertEquals(playerName, startedGameEvent.player());
     }
 
     @Test
     @Order(2)
     public void endGameWithNoPlaysShouldBeDraw() {
         // when
-        var newState = endGameHandler.handle(gameID);
+        var state = new GameState(gameID, events);
+        var newState = endGameHandler.handle(state);
         // then state
         assertEquals(2, newState.events().size());
         assertNotNull(newState.gameId());

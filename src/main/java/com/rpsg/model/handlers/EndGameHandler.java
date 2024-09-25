@@ -1,10 +1,7 @@
 package com.rpsg.model.handlers;
 
 import com.rpsg.model.GameEvent;
-import com.rpsg.model.GameEventRepository;
 import com.rpsg.model.GameState;
-import com.rpsg.model.GameStatus;
-import com.rpsg.model.GameStatusRepository;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
 
@@ -16,27 +13,18 @@ import java.util.stream.Collectors;
 @Component
 public class EndGameHandler {
 
-    private final GameEventRepository gameEventRepository;
-    private final GameStatusRepository gameStatusRepository;
-
-    public EndGameHandler(GameEventRepository gameEventRepository, GameStatusRepository gameStatusRepository) {
-        this.gameEventRepository = gameEventRepository;
-        this.gameStatusRepository = gameStatusRepository;
-    }
-
-    public GameState handle(String gameId) {
-        var currentEvents = gameEventRepository.findAll(gameId);
-        if (currentEvents.isEmpty()) {
-            throw new IllegalArgumentException("Game not found");
-        }
+    public GameState handle(GameState gameState) {
+        var currentEvents = gameState.events();
+//        if (currentEvents.isEmpty()) {
+//            throw new IllegalArgumentException("Game not found");
+//        }
         if (currentEvents.getLast() instanceof GameEvent.GameEnded) {
             throw new IllegalStateException("Game is already ended");
         }
         var winner = determineWinner(currentEvents);
-        var newEvent = new GameEvent.GameEnded(gameId, winner);
-        var newEvents = gameEventRepository.appendEvent(gameId, newEvent);
-        gameStatusRepository.setStatus(gameId, GameStatus.ENDED);
-        return new GameState(newEvent.gameId(), newEvents);
+        var newEvent = new GameEvent.GameEnded(gameState.gameId(), winner);
+        gameState.events().add(newEvent);
+        return gameState;
     }
 
     private Winner determineWinner(List<? extends GameEvent> events) {

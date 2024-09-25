@@ -1,5 +1,7 @@
 package com.rpsg.controller;
 
+import com.rpsg.repository.EndGameProcessor;
+import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameRepresentationMapperTest {
 
-    private final EndGameController.GameRepresentationMapper gameRepresentationMapper = new EndGameController.GameRepresentationMapper();
+    private final EndGameProcessor.GameRepresentationMapper gameRepresentationMapper = new EndGameProcessor.GameRepresentationMapper();
 
     @Test
     public void shouldMapToRepresentation() {
@@ -27,7 +29,7 @@ public class GameRepresentationMapperTest {
         GameState gameState = new GameState(gameId, gameEvents);
 
         // When
-        EndGameController.GameRepresentation gameRepresentation = gameRepresentationMapper.map(gameState);
+        GameRepresentation gameRepresentation = gameRepresentationMapper.map(gameState);
 
         // Then
         assertNotNull(gameRepresentation);

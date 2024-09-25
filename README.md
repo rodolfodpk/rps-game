@@ -21,7 +21,8 @@
     ```bash
         k6 run k6_script.js
     ```
-   Then you will see something like:
+  Then you will see something like:
+
 ```
 
           /\      |‾‾| /‾‾/   /‾‾/   
@@ -72,15 +73,8 @@ default ✓ [======================================] 0000/1000 VUs  2m15s
   assert basic architecture
 * It has a [`GameE2ETest`](./src/test/java/com/rpsg/GameE2ETest.java) to assert basic API features
 * It has a [`K6`](https://k6.io/) [`Load test`](./k6_script.js)
+* It's using Hazelcast
 * For the sake of simplicity and time to deliver:
-    * [`GameEventRepository`](./src/main/java/com/rpsg/model/GameEventRepository.java)
-        * [`Implementation`](./src/main/java/com/rpsg/repository/GameEventCaffeineRepository.java) is
-          using [`Caffeine`](https://github.com/ben-manes/caffeine) instead of a distributed cache
-          like [`KeyDb`](https://docs.keydb.dev/).
-        * API is not based on Reactor, even though it's only implementation does not block IO (RAM storage).
-        * Just in case, [`GameControllers`](./src/main/java/com/rpsg/controller) are consuming
-          handlers
-          as a blocking API. Just in order to enable me try other repository implementation.
     * It's far from production ready: errors, distributed store, persistence, circuit breakers, observability, etc
 
 Thanks!

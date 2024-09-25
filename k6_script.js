@@ -20,6 +20,7 @@ export default function () {
     let startGameRes = http.post(`${BASE_URL}?playerName=${playerName}`);
     check(startGameRes, {'Game started successfully': (resp) => resp.status === 201});
     let json = JSON.parse(startGameRes.body);
+    // console.log(startGameRes)
     let gameId = json.gameId;
 
     // sleep(1);

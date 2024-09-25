@@ -1,6 +1,6 @@
 package com.rpsg;
 
-import com.rpsg.controller.EndGameController;
+import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameEvent;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -24,11 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GameE2ETest {
 
+    private static final String invalidGameId = UUID.randomUUID().toString();
     @Autowired
     private WebTestClient webTestClient;
-
     private String gameID;
-    private static final String invalidGameId = UUID.randomUUID().toString();
 
     @Test
     @Order(1)
@@ -80,9 +79,9 @@ public class GameE2ETest {
                         .build(gameID))
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody(EndGameController.GameRepresentation.class)
+                .expectBody(GameRepresentation.class)
                 .consumeWith(response -> {
-                    EndGameController.GameRepresentation gameRepresentation = response.getResponseBody();
+                    GameRepresentation gameRepresentation = response.getResponseBody();
                     assertNotNull(gameRepresentation.gameId());
                     assertNotNull(gameRepresentation.playerId());
                     assertNotNull(gameRepresentation.winner());

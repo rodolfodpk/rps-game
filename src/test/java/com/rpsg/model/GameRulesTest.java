@@ -15,8 +15,7 @@ import static org.mockito.Mockito.when;
 public class GameRulesTest extends AbstractScenarioTest {
 
     private final PlayRoundHandler.GameMoveDecider gameMoveDecider = mock(PlayRoundHandler.GameMoveDecider.class);
-    private final PlayRoundHandler playRoundHandler =
-            new PlayRoundHandler(gameEventRepository, gameMoveDecider, gameStatusRepository);
+    private final PlayRoundHandler playRoundHandler = new PlayRoundHandler(gameMoveDecider);
 
     @ParameterizedTest(name = "When human move is {0} and game move is {1} then the winner is {2}")
     @CsvSource({
@@ -32,24 +31,33 @@ public class GameRulesTest extends AbstractScenarioTest {
     })
     void testMoveCombination(String humanMove, String gameMove, String expectedWinner) {
         // given
+        events.clear();
         var gameID = UUID.randomUUID().toString();
         var playerName = "Player1";
-        var gameStartedEvent = startGameHandler.handle(gameID, playerName);
+        var gameStartedEvent = startGameHandler.handle(gameID, playerName, null);
+        events.add(gameStartedEvent);
         // when
         var humanPlay = Move.valueOf(humanMove);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.valueOf(gameMove));
-        var playEvent = playRoundHandler.handle(gameID, humanPlay);
-        var endState = endGameHandler.handle(gameID);
+        var gamePlayed = playRoundHandler.handle(gameID, humanPlay, GameStatus.STARTED);
+        events.add(gamePlayed);
+        var state = new GameState(gameID, events);
+        System.out.println("1 ->" + state.gameId());
+        state.events().forEach(System.out::println);
+
+        var endState = endGameHandler.handle(state);
+        System.out.println("2 ->" + state.gameId());
+        endState.events().forEach(System.out::println);
         var endGameEvent = endState.events().getLast();
         // then game started
         assertNotNull(gameStartedEvent.gameId());
         // then play event
-        if (Objects.requireNonNull(playEvent) instanceof GameEvent.RoundPlayed roundPlayed) {
+        if (Objects.requireNonNull(gamePlayed) instanceof GameEvent.RoundPlayed roundPlayed) {
             assertEquals(Move.valueOf(humanMove), roundPlayed.playerMove());
             assertEquals(Move.valueOf(gameMove), roundPlayed.gameMove());
             assertEquals(Winner.valueOf(expectedWinner), roundPlayed.winner());
         } else {
-            throw new IllegalStateException("Unexpected value: " + playEvent);
+            throw new IllegalStateException("Unexpected value: " + gamePlayed);
         }
         // then end game event
         assertEquals(Winner.valueOf(expectedWinner), ((GameEvent.GameEnded) endGameEvent).winner());
