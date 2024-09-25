@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rps-game-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rps-game
+  template:
+    metadata:
+      labels:
+        app: rps-game
+    spec:
+      containers:
+        - name: rps-game
+          image: rps-game:latest
+          ports:
+            - containerPort: 8080

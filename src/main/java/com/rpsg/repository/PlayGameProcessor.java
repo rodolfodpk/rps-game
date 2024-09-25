@@ -7,9 +7,10 @@ import com.rpsg.model.GameStatus;
 import com.rpsg.model.Move;
 import com.rpsg.model.handlers.PlayRoundHandler;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class PlayGameProcessor implements EntryProcessor<String, GameState, GameEvent.RoundPlayed> {
+public class PlayGameProcessor implements Serializable, EntryProcessor<String, GameState, GameEvent.RoundPlayed> {
 
     private final PlayRoundHandler playRoundHandler;
     private final Move playerMove;

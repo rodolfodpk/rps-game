@@ -10,6 +10,7 @@ import com.rpsg.model.Winner;
 import com.rpsg.model.handlers.EndGameHandler;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EndGameProcessor implements EntryProcessor<String, GameState, GameRepresentation> {
+public class EndGameProcessor implements Serializable, EntryProcessor<String, GameState, GameRepresentation> {
 
     private final EndGameHandler endGameHandler;
 

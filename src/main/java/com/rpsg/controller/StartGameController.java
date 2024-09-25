@@ -1,10 +1,10 @@
 package com.rpsg.controller;
 
 import com.hazelcast.map.IMap;
-import com.rpsg.repository.StartGameProcessor;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
 import com.rpsg.model.handlers.StartGameHandler;
+import com.rpsg.repository.StartGameProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +30,8 @@ public class StartGameController {
 
     @PostMapping()
     public Mono<ResponseEntity<GameEvent.GameStarted>> startGame(@RequestParam("playerName") String playerName) {
-        var gameId = UUID.randomUUID().toString();
         return Mono.fromCallable(() -> {
+                    String gameId = UUID.randomUUID().toString();
                     var processor = new StartGameProcessor(playerName, startGameHandler);
                     return gameStateMap.executeOnKey(gameId, processor);
                 })

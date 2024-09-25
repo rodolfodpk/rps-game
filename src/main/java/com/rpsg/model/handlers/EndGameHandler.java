@@ -5,13 +5,14 @@ import com.rpsg.model.GameState;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class EndGameHandler {
+public class EndGameHandler implements Serializable {
 
     public GameState handle(GameState gameState) {
         var currentEvents = gameState.events();

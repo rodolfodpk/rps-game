@@ -1,11 +1,11 @@
 package com.rpsg.controller;
 
-import com.rpsg.repository.EndGameProcessor;
-import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameEvent;
+import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
 import com.rpsg.model.Winner;
+import com.rpsg.repository.EndGameProcessor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

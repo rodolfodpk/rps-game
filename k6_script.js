@@ -3,10 +3,10 @@ import http from 'k6/http';
 
 export let options = {
     stages: [
-        {duration: '5s', target: 1}, // warm up
-        {duration: '10s', target: 10}, // warm up
-        {duration: '1m', target: 100}, // ramp up to N users over N minutes
-        {duration: '1m', target: 1000}, // stay at N users for N minutes
+        {duration: '30s', target: 1}, // warm up
+        {duration: '1m', target: 10}, // warm up
+        // {duration: '1m', target: 100}, // ramp up to N users over N minutes
+        // {duration: '1m', target: 1000}, // stay at N users for N minutes
         // {duration: '2m', target: 0}, // ramp down to 0 users over 1 minute
     ],
 };

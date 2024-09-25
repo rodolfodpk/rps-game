@@ -6,10 +6,11 @@ import com.rpsg.model.Move;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Random;
 
 @Component
-public class PlayRoundHandler {
+public class PlayRoundHandler implements Serializable {
 
     private final GameMoveDecider gameMoveDecider;
 
@@ -38,7 +39,7 @@ public class PlayRoundHandler {
     }
 
     @Component
-    public static class GameMoveDecider {
+    public static class GameMoveDecider implements Serializable {
 
         private final Random random = new Random();
 

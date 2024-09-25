@@ -1,10 +1,10 @@
 package com.rpsg.controller;
 
 import com.hazelcast.map.IMap;
-import com.rpsg.repository.EndGameProcessor;
 import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameState;
 import com.rpsg.model.handlers.EndGameHandler;
+import com.rpsg.repository.EndGameProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,7 @@ public class EndGameController {
 
     private final IMap<String, GameState> gameStateMap;
 
-    public EndGameController(IMap<String, GameState> gameStateMap, EndGameProcessor.GameRepresentationMapper mapper) {
+    public EndGameController(IMap<String, GameState> gameStateMap) {
         this.gameStateMap = gameStateMap;
     }
 
