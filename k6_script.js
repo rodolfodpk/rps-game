@@ -5,13 +5,13 @@ export let options = {
     stages: [
         {duration: '30s', target: 1}, // warm up
         {duration: '1m', target: 10}, // warm up
-        // {duration: '1m', target: 100}, // ramp up to N users over N minutes
-        // {duration: '1m', target: 1000}, // stay at N users for N minutes
+        {duration: '1m', target: 100}, // ramp up to N users over N minutes
+        {duration: '1m', target: 1000}, // stay at N users for N minutes
         // {duration: '2m', target: 0}, // ramp down to 0 users over 1 minute
     ],
 };
 
-const BASE_URL = 'http://localhost:8080/games'; // Replace with your application URL
+const BASE_URL = 'http://localhost:9999/games'; // Replace with your application URL
 
 export default function () {
     let playerName = `Player${Math.floor(Math.random() * 10000)}`;

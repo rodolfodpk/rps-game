@@ -42,12 +42,7 @@ public class GameRulesTest extends AbstractScenarioTest {
         var gamePlayed = playRoundHandler.handle(gameID, humanPlay, GameStatus.STARTED);
         events.add(gamePlayed);
         var state = new GameState(gameID, events);
-        // System.out.println("1 ->" + state.gameId());
-        state.events().forEach(System.out::println);
-
         var endState = endGameHandler.handle(state);
-        System.out.println("2 ->" + state.gameId());
-        endState.events().forEach(System.out::println);
         var endGameEvent = endState.events().getLast();
         // then game started
         assertNotNull(gameStartedEvent.gameId());

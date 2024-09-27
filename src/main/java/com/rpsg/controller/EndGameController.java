@@ -19,6 +19,7 @@ import reactor.core.scheduler.Schedulers;
 public class EndGameController {
 
     private final IMap<String, GameState> gameStateMap;
+    private final EndGameProcessor processor = new EndGameProcessor(new EndGameHandler());
 
     public EndGameController(IMap<String, GameState> gameStateMap) {
         this.gameStateMap = gameStateMap;
@@ -26,10 +27,7 @@ public class EndGameController {
 
     @PutMapping("/{gameId}/endings")
     public Mono<ResponseEntity<GameRepresentation>> endGame(@PathVariable String gameId) {
-        return Mono.fromCallable(() -> {
-                    var processor = new EndGameProcessor(new EndGameHandler());
-                    return gameStateMap.executeOnKey(gameId, processor);
-                })
+        return Mono.fromCallable(() -> gameStateMap.executeOnKey(gameId, processor))
                 .map(gameState -> new ResponseEntity<>(gameState, HttpStatus.CREATED))
                 .onErrorResume(IllegalArgumentException.class, e -> Mono.just(ResponseEntity.notFound().build()))
                 .onErrorResume(IllegalStateException.class, e -> Mono.just(ResponseEntity.badRequest().build()))

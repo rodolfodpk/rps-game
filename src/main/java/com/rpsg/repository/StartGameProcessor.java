@@ -5,11 +5,10 @@ import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
 import com.rpsg.model.handlers.StartGameHandler;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class StartGameProcessor implements Serializable, EntryProcessor<String, GameState, GameEvent.GameStarted> {
+public class StartGameProcessor implements EntryProcessor<String, GameState, GameEvent.GameStarted> {
 
     private final String playerName;
     private final StartGameHandler startGameHandler;
