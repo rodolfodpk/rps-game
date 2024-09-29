@@ -34,14 +34,14 @@ public class GameRulesTest extends AbstractScenarioTest {
         events.clear();
         var gameID = UUID.randomUUID().toString();
         var playerName = "Player1";
-        var gameStartedEvent = startGameHandler.handle(gameID, playerName, null);
+        var gameStartedEvent = startGameHandler.handle(gameID, playerName);
         events.add(gameStartedEvent);
         // when
         var humanPlay = Move.valueOf(humanMove);
         when(gameMoveDecider.determineGameMove()).thenReturn(Move.valueOf(gameMove));
         var gamePlayed = playRoundHandler.handle(gameID, humanPlay, GameStatus.STARTED);
         events.add(gamePlayed);
-        var state = new GameState(gameID, events);
+        var state = new GameState(gameID, GameStatus.STARTED, events);
         var endState = endGameHandler.handle(state);
         var endGameEvent = endState.events().getLast();
         // then game started

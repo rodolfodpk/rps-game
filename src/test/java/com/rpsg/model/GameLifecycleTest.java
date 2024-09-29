@@ -22,22 +22,11 @@ public class GameLifecycleTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var startedGameEvent = startGameHandler.handle(gameID, playerName, null);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName);
         events.add(startedGameEvent);
         // then
         assertEquals(gameID, startedGameEvent.gameId());
         assertEquals("Player1", startedGameEvent.player());
-    }
-
-    @Test
-    @Order(2)
-    public void startSameGameShouldFail() {
-        // given
-        var playerName = "Player1";
-        // when
-        var exception = assertThrows(IllegalStateException.class, () -> startGameHandler.handle(gameID, playerName, STARTED));
-        // then
-        assertEquals("Game is already started or ended", exception.getMessage());
     }
 
     @Test
@@ -59,7 +48,7 @@ public class GameLifecycleTest extends AbstractScenarioTest {
     @Order(4)
     public void endGame() {
         // when
-        var state = new GameState(gameID, events);
+        var state = new GameState(gameID, STARTED, events);
         var newState = endGameHandler.handle(state);
         // then state
         assertEquals(3, newState.events().size());
@@ -73,7 +62,7 @@ public class GameLifecycleTest extends AbstractScenarioTest {
     @Order(5)
     public void endGameAgainMustFail() {
         // when
-        var state = new GameState(gameID, events);
+        var state = new GameState(gameID, ENDED, events);
         var exception = assertThrows(IllegalStateException.class, () -> endGameHandler.handle(state));
         // then
         assertEquals("Game is already ended", exception.getMessage());

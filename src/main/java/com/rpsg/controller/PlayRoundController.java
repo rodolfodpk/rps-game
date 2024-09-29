@@ -6,6 +6,8 @@ import com.rpsg.model.GameState;
 import com.rpsg.model.Move;
 import com.rpsg.model.handlers.PlayRoundHandler;
 import com.rpsg.repository.PlayGameProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import reactor.core.scheduler.Schedulers;
 @RequestMapping("/games")
 public class PlayRoundController {
 
+    private static final Logger logger = LoggerFactory.getLogger(PlayRoundController.class);
     private final IMap<String, GameState> gameStateMap;
     private final PlayRoundHandler playRoundHandler;
 
@@ -32,6 +35,7 @@ public class PlayRoundController {
     public Mono<ResponseEntity<GameEvent.RoundPlayed>> playRound(@PathVariable String gameId,
                                                                  @RequestParam("playerMove") Move playerMove) {
         return Mono.fromCallable(() -> {
+                    logger.debug("play.gameId: {}", gameId);
                     var processor = new PlayGameProcessor(playRoundHandler, playerMove);
                     return gameStateMap.executeOnKey(gameId, processor);
                 })

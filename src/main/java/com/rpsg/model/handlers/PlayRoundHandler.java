@@ -19,7 +19,7 @@ public class PlayRoundHandler implements Serializable {
     }
 
     public GameEvent.RoundPlayed handle(String gameId, Move playerMove, GameStatus gameStatus) {
-        if (gameStatus == GameStatus.ENDED) {
+        if (gameStatus != GameStatus.STARTED) {
             throw new IllegalStateException("Game is already ended");
         }
         var gameMove = gameMoveDecider.determineGameMove();

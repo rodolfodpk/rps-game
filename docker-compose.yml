@@ -11,53 +11,25 @@ services:
       - app1
       - app2
       - app3
-  #    networks:
-  #      - hazelcast-network
 
   app1:
     image: rps-game
-    ports:
-      - "8081:8080"
+    #    ports:
+    #      - "8081:8080"
     environment:
       JAVA_OPTS: "-DDEFAULT_BOUNDED_ELASTIC_ON_VIRTUAL_THREAD=true"
-  #    depends_on:
-  #      - nginx-server
-  #    networks:
-  #      - hazelcast-network
 
   app2:
     image: rps-game
-    ports:
-      - "8082:8080"
+    #    ports:
+    #      - "8082:8080"
     environment:
       JAVA_OPTS: "-DDEFAULT_BOUNDED_ELASTIC_ON_VIRTUAL_THREAD=true"
-  #    depends_on:
-  #      - nginx-server
-  #    networks:
-  #      - hazelcast-network
 
   app3:
     image: rps-game
-    ports:
-      - "8083:8080"
+    #    ports:
+    #      - "8083:8080"
     environment:
       JAVA_OPTS: "-DDEFAULT_BOUNDED_ELASTIC_ON_VIRTUAL_THREAD=true"
-    #    depends_on:
-    #      - nginx-server
-#    networks:
-#      - hazelcast-network
 
-#  management-center:
-#    image: hazelcast/management-center:5.5.2
-#    ports:
-#      - "8083:8080"
-#    environment:
-#      - MC_DEFAULT_CLUSTER=dev
-#      - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast
-
-#networks:
-#  hazelcast-network:
-#    driver: bridge
-
-#  hazelcast:
-#    image: hazelcast/hazelcast:latest

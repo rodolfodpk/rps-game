@@ -11,19 +11,19 @@ export let options = {
     ],
 };
 
-const BASE_URL = 'http://localhost:9999/games'; // Replace with your application URL
+const BASE_URL = 'http://localhost:8080/games'; // docker-compose = 9999 or else 8080
 
 export default function () {
     let playerName = `Player${Math.floor(Math.random() * 10000)}`;
+    let gameId = uuidv4() + "-" + playerName;
 
     // Start a game
-    let startGameRes = http.post(`${BASE_URL}?playerName=${playerName}`);
+    let startGameRes = http.put(`${BASE_URL}/${gameId}?playerName=${playerName}`);
     check(startGameRes, {'Game started successfully': (resp) => resp.status === 201});
-    let json = JSON.parse(startGameRes.body);
+    // let json = JSON.parse(startGameRes.body);
     // console.log(startGameRes)
-    let gameId = json.gameId;
 
-    // sleep(1);
+    // sleep(5);
 
     const moves = ['ROCK', 'PAPER', 'SCISSORS'];
     let playerMove = moves[Math.floor(Math.random() * moves.length)];  // Randomizes move between 'ROCK', 'PAPER', 'SCISSORS'
@@ -38,5 +38,12 @@ export default function () {
     let endGameRes = http.put(`${BASE_URL}/${gameId}/endings`);
     check(endGameRes, {'Game ended successfully': (resp) => resp.status === 201});
 
-    // sleep(1);
+    // // sleep(1);
+}
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }

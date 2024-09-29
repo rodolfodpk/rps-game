@@ -21,8 +21,9 @@ public class HazelcastConfig {
                 .addMapConfig(
                         new MapConfig()
                                 .setName(gameMapName)
-                                .setTimeToLiveSeconds(10 * 60));
+                                .setTimeToLiveSeconds(10 * 60 * 60));
         config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        config.getJetConfig().setEnabled(false);
         return config;
     }
 

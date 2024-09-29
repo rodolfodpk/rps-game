@@ -2,6 +2,7 @@ package com.rpsg.model.handlers;
 
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
+import com.rpsg.model.GameStatus;
 import com.rpsg.model.Winner;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +16,10 @@ import java.util.stream.Collectors;
 public class EndGameHandler implements Serializable {
 
     public GameState handle(GameState gameState) {
-        var currentEvents = gameState.events();
-//        if (currentEvents.isEmpty()) {
-//            throw new IllegalArgumentException("Game not found");
-//        }
-        if (currentEvents.getLast() instanceof GameEvent.GameEnded) {
+        if (gameState.status() != GameStatus.STARTED) {
             throw new IllegalStateException("Game is already ended");
         }
+        var currentEvents = gameState.events();
         var winner = determineWinner(currentEvents);
         var newEvent = new GameEvent.GameEnded(gameState.gameId(), winner);
         gameState.events().add(newEvent);

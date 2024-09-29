@@ -3,6 +3,7 @@ package com.rpsg.controller;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameState;
+import com.rpsg.model.GameStatus;
 import com.rpsg.model.Move;
 import com.rpsg.model.Winner;
 import com.rpsg.repository.EndGameProcessor;
@@ -26,7 +27,7 @@ public class GameRepresentationMapperTest {
                 new GameEvent.RoundPlayed(gameId, Move.PAPER, Move.ROCK, Winner.HUMAN),
                 new GameEvent.GameEnded(gameId, Winner.HUMAN)
         );
-        GameState gameState = new GameState(gameId, gameEvents);
+        GameState gameState = new GameState(gameId, GameStatus.STARTED, gameEvents);
 
         // When
         GameRepresentation gameRepresentation = gameRepresentationMapper.map(gameState);

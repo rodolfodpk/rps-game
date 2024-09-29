@@ -32,10 +32,11 @@ public class GameE2ETest {
     @Test
     @Order(1)
     public void startGame() {
+        this.gameID = UUID.randomUUID().toString();
         var reponse = webTestClient
-                .post()
+                .put()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/games")
+                        .path("/games/{gameID}")
                         .queryParam("playerName", "John")
                         .build(gameID))
                 .exchange()
@@ -113,4 +114,18 @@ public class GameE2ETest {
                 .exchange()
                 .expectStatus().isNotFound();
     }
+
+    @Test
+    @Order(6)
+    public void startSameGameAgainFail() {
+        webTestClient
+                .put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/games/{gameID}")
+                        .queryParam("playerName", "John")
+                        .build(gameID))
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
 }

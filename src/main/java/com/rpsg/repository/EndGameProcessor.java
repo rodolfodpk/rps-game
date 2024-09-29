@@ -27,10 +27,10 @@ public class EndGameProcessor implements EntryProcessor<String, GameState, GameR
 
     @Override
     public GameRepresentation process(Map.Entry<String, GameState> entry) {
-        if (entry.getValue() == null) {
+        var state = entry.getValue();
+        if (state == null) {
             throw new IllegalArgumentException("Game not found");
         }
-        var state = entry.getValue();
         var newState = endGameHandler.handle(state);
         return new GameRepresentationMapper().map(newState);
     }

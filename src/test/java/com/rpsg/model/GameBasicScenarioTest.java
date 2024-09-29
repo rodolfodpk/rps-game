@@ -20,7 +20,7 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
         // given
         var playerName = "Player1";
         // when
-        var startedGameEvent = startGameHandler.handle(gameID, playerName, null);
+        var startedGameEvent = startGameHandler.handle(gameID, playerName);
         events.add(startedGameEvent);
         // then
         assertNotNull(gameID);
@@ -77,7 +77,7 @@ public class GameBasicScenarioTest extends AbstractScenarioTest {
     @Order(5)
     public void endGameWon() {
         // when
-        var state = new GameState(gameID, events);
+        var state = new GameState(gameID, GameStatus.STARTED, events);
         var newState = endGameHandler.handle(state);
         // then state
         assertEquals(5, newState.events().size());

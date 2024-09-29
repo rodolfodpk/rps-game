@@ -5,6 +5,8 @@ import com.rpsg.model.GameRepresentation;
 import com.rpsg.model.GameState;
 import com.rpsg.model.handlers.EndGameHandler;
 import com.rpsg.repository.EndGameProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,8 @@ import reactor.core.scheduler.Schedulers;
 @RequestMapping("/games")
 public class EndGameController {
 
+    private static final Logger logger = LoggerFactory.getLogger(EndGameController.class);
+
     private final IMap<String, GameState> gameStateMap;
     private final EndGameProcessor processor = new EndGameProcessor(new EndGameHandler());
 
@@ -27,7 +31,10 @@ public class EndGameController {
 
     @PutMapping("/{gameId}/endings")
     public Mono<ResponseEntity<GameRepresentation>> endGame(@PathVariable String gameId) {
-        return Mono.fromCallable(() -> gameStateMap.executeOnKey(gameId, processor))
+        return Mono.fromCallable(() -> {
+                    logger.debug("end.gameId: {}", gameId);
+                    return gameStateMap.executeOnKey(gameId, processor);
+                })
                 .map(gameState -> new ResponseEntity<>(gameState, HttpStatus.CREATED))
                 .onErrorResume(IllegalArgumentException.class, e -> Mono.just(ResponseEntity.notFound().build()))
                 .onErrorResume(IllegalStateException.class, e -> Mono.just(ResponseEntity.badRequest().build()))

@@ -3,7 +3,6 @@ package com.rpsg.repository;
 import com.hazelcast.map.EntryProcessor;
 import com.rpsg.model.GameEvent;
 import com.rpsg.model.GameState;
-import com.rpsg.model.GameStatus;
 import com.rpsg.model.Move;
 import com.rpsg.model.handlers.PlayRoundHandler;
 
@@ -21,12 +20,12 @@ public class PlayGameProcessor implements EntryProcessor<String, GameState, Game
 
     @Override
     public GameEvent.RoundPlayed process(Map.Entry<String, GameState> entry) {
-        if (entry.getValue() == null) {
-            throw new IllegalArgumentException("Game not found");
-        }
         var gameId = entry.getKey();
         var state = entry.getValue();
-        var newEvent = playRoundHandler.handle(gameId, playerMove, GameStatus.STARTED); // TODO get status
+        if (state == null) {
+            throw new IllegalArgumentException("Game not found");
+        }
+        var newEvent = playRoundHandler.handle(gameId, playerMove, state.status());
         state.events().add(newEvent);
         entry.setValue(state);
         return newEvent;
