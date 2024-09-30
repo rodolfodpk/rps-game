@@ -14,7 +14,7 @@ export let options = {
 const BASE_URL = 'http://localhost:8080/games'; // docker-compose = 9999 or else 8080
 
 export default function () {
-    let playerName = `Player${Math.floor(Math.random() * 10000)}`;
+    let playerName = `Player${Math.floor(Math.random() * 100000000)}`;
     let gameId = uuidv4() + "-" + playerName;
 
     // Start a game
